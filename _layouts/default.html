@@ -8,7 +8,7 @@
 <body>
   <main class="container">
     <section class="about">
-      <a href="/"><img src="{{ "/assets/portfolio.png" | relative_url }}" alt="{{ site.plainwhite.name }}"></a>
+      <a href="/"><img src="{{ "/assets/java.png" | relative_url }}" alt="{{ site.plainwhite.name }}"></a>
       <h2 id="title">
         <a href="/">{{ site.plainwhite.name }}</a>
       </h2>
@@ -25,6 +25,13 @@
         <a href="https://www.linkedin.com/{{ site.plainwhite.social_links.linkedIn }}" target="_blank">
           <li>
             <i class="icon-linkedin-squared"></i>
+          </li>
+        </a>
+        {%- endif -%}
+         {%- if site.plainwhite.social_links.stackoverflow -%}
+        <a href="https://stackoverflow.com/users/1053496/{{ site.plainwhite.social_links.stackoverflow }}" target="_blank">
+          <li>
+            <i class="icon-stackoverflow"></i>
           </li>
         </a>
         {%- endif -%}
