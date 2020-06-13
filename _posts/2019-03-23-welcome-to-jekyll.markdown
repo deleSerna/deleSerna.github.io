@@ -113,6 +113,7 @@ spec:
     app: elasticsearch
 ```
 Springboot app is also connecting to the **mysqldb** which is running on the machine(ip *192.168.1.40*) on port no *3308*, outside of the cluster.
+
 **Mysql service's(connect to local db) kubernet file**
 ```yaml
 apiVersion: v1
