@@ -77,7 +77,7 @@ Get the NodePort by
 kubectl describe services serviceName
 ```
 I decided to store the elastic search indices into a local directory outside the machine. Therfore deployed elasticsearch as 
-*StatefulSet*. To mount a local directory into a pod in minikube (version - v1.9.2), you have to mount that local directory into minikube then use minikube mounted path in [hostpath][host-path].
+*StatefulSet*[2]. To mount a local directory into a pod in minikube (version - v1.9.2), you have to mount that local directory into minikube then use minikube mounted path in [hostpath][host-path].
 [host-path]: https://minikube.sigs.k8s.io/docs/handbook/mount/
 ```
 minikube mount ~/esData:/indexdata
@@ -172,3 +172,4 @@ subsets:
 ```        
 References
 1. https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
+2. https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts.
