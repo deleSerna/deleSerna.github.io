@@ -13,10 +13,12 @@ I used [minikube][minikube] (version 1.11.0) to run Kubernetes locally.
 To start the minikube please  use ```minikube start```
 Since we are using   a custom springboot application, first we have to create a docker image of the application and put it in minikube’s docker image registry.  We have to pay attention that we have to put the image in minikube’s docker image registry not in our normal local docker image registry [1].
 We need to set the environment variable with eval command ```eval $(minikube docker-env)```
-```minikube ssh
+```
+minikube ssh
 eval $(minikube docker-env)
 docker image build --tag=dymmyapp --rm=true .
-docker images```
+docker images
+```
 
 Then deploy the springboot app using  ```kubectl apply -f springboot.yaml```.  It deploys the springbok app on a container which runs on port 8080 (**targetPort**). Then a service will create which expose the springboot app on port 8080. 
 To connect to the springboot externally, we made it as **NodePort type**. kubectl get services will return the Nodeport on which we can connect from outside the cluster.
