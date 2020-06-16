@@ -21,8 +21,7 @@ docker images
 ```
 
 Then deploy the springboot app using  ```kubectl apply -f springboot.yaml```.  It deploys the springboot app on a container which runs on port 8080 (**targetPort**). Then a service will create which expose the springboot app on port 8080. 
-To connect to the springboot externally, we made it as **NodePort type**.
-[—- To be updated]
+To connect to the springboot externally, we made it as **NodePort type**[3].
 
 [mini-kube]: https://kubernetes.io/docs/setup/learning-environment/minikube/
 
@@ -172,4 +171,5 @@ subsets:
 ```        
 References
 1. https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
-2. https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts.
+2. https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts
+3. https://www.bmc.com/blogs/kubernetes-port-targetport-nodeport/
