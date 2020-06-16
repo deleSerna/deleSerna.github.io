@@ -9,7 +9,7 @@ I have recently developed a demo springboot ( version 2.2.5) application which u
 
 I planned to deploy the application in the following way. Mysql database will be running in the system outside of the Kubernetes cluster. Springboot app which will run in the kubernetes cluster will write some data to the database. Then elasticsearch index will create using the db data. Then finally we will search in the created  elastic search index. We will have 3 endpoints in the springboot to these action 1. CreateDbdata end point will write  to the db 2. CreateEsindex will load data from the db and will create the elastic search index 3.Search will search in the elastic search index to fetch data which matches to our criteria. Source code of the springboot app can see here (TODO, need to provide a GitHub repo link).
 
-I used [minikube][minikube] (version 1.11.0) to run Kubernetes locally. 
+I used [minikube][mini-kube] (version 1.11.0) to run Kubernetes locally. 
 To start the minikube please  use ```minikube start```
 Since we are using   a custom springboot application, first we have to create a docker image of the application and put it in minikube’s docker image registry.  We have to pay attention that we have to put the image in minikube’s docker image registry not in our normal local docker image registry [1].
 We need to set the environment variable with eval command ```eval $(minikube docker-env)```
@@ -23,7 +23,7 @@ docker images
 Then deploy the springboot app using  ```kubectl apply -f springboot.yaml```.  It deploys the springbok app on a container which runs on port 8080 (**targetPort**). Then a service will create which expose the springboot app on port 8080. 
 To connect to the springboot externally, we made it as **NodePort type**. kubectl get services will return the Nodeport on which we can connect from outside the cluster.
 [—- To be updated]
-[minikube]:https://kubernetes.io/docs/setup/learning-environment/minikube/
+[mini-kube]: https://kubernetes.io/docs/setup/learning-environment/minikube/
 **springboot helloworld app kubernet file**
 ```yaml
 apiVersion: apps/v1
