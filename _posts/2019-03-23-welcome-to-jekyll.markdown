@@ -22,8 +22,11 @@ docker images
 
 Then deploy the springboot app using  ```kubectl apply -f springboot.yaml```.  It deploys the springbok app on a container which runs on port 8080 (**targetPort**). Then a service will create which expose the springboot app on port 8080. 
 To connect to the springboot externally, we made it as **NodePort type**. kubectl get services will return the Nodeport on which we can connect from outside the cluster.
+
 [—- To be updated]
+
 [mini-kube]: https://kubernetes.io/docs/setup/learning-environment/minikube/
+
 **springboot helloworld app kubernet file**
 ```yaml
 apiVersion: apps/v1
