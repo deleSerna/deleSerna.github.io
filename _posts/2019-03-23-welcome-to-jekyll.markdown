@@ -66,20 +66,16 @@ spec:
     app: helloworld          
 
 ```
-To connect to the service from outside cluster, we have to use NodeIp:NodePort
+To connect to the service from outside cluster, we have to use NodeIp:NodePort.
+
 Get the NodeIp by
 ```sh 
 minikube ip
 ```
-Get the NodePort from 
+Get the NodePort by 
 ``` sh
 kubectl describe services serviceName
 ```
-Check out the [Jekyll docs][jekyll-docs] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll Talk][jekyll-talk].
-
-[jekyll-docs]: https://jekyllrb.com/docs/home
-[jekyll-gh]:   https://github.com/jekyll/jekyll
-[jekyll-talk]: https://talk.jekyllrb.com/
 
 **elasticsearch  kubernet file**
 ```yaml
