@@ -20,9 +20,8 @@ docker image build --tag=dymmyapp --rm=true .
 docker images
 ```
 
-Then deploy the springboot app using  ```kubectl apply -f springboot.yaml```.  It deploys the springbok app on a container which runs on port 8080 (**targetPort**). Then a service will create which expose the springboot app on port 8080. 
-To connect to the springboot externally, we made it as **NodePort type**. kubectl get services will return the Nodeport on which we can connect from outside the cluster.
-
+Then deploy the springboot app using  ```kubectl apply -f springboot.yaml```.  It deploys the springboot app on a container which runs on port 8080 (**targetPort**). Then a service will create which expose the springboot app on port 8080. 
+To connect to the springboot externally, we made it as **NodePort type**.
 [—- To be updated]
 
 [mini-kube]: https://kubernetes.io/docs/setup/learning-environment/minikube/
@@ -67,7 +66,15 @@ spec:
     app: helloworld          
 
 ```
-
+To connect to the service from outside cluster, we have to use NodeIp:NodePort
+Get the NodeIp by
+```sh 
+minikube ip
+```
+Get the NodePort from 
+``` sh
+kubectl describe services serviceName
+```
 Check out the [Jekyll docs][jekyll-docs] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll Talk][jekyll-talk].
 
 [jekyll-docs]: https://jekyllrb.com/docs/home
