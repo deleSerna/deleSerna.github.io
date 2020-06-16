@@ -76,6 +76,15 @@ Get the NodePort by
 ``` sh
 kubectl describe services serviceName
 ```
+I decided to store the elastic search indices into a local directory outside the machine. Therfore deployed elasticsearch as 
+*StatefulSet*. To mount a local directory into a pod in minikube (version - v1.9.2), you have to mount that local directory into minikube then use minikube mounted path in [hostpath][host-path].
+[host-path]: https://minikube.sigs.k8s.io/docs/handbook/mount/
+```
+minikube mount ~/esData:/indexdata
+```
+*You have to run minikube mount in a separate terminal because it starts a process and stays there until you unmount*.
+
+Another issue which I faced during mounting was elastic search server pod was throwing *java.nio.file.AccessDeniedException: /usr/share/elasticsearch/data/nodes* . To solve that, we have to use **initContainers** to set full permission in /usr/share/elasticsearch/data/nodes.
 
 **elasticsearch  kubernet file**
 ```yaml
