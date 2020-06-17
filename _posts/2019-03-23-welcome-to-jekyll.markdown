@@ -144,7 +144,7 @@ spec:
   selector:
     app: elasticsearch
 ```
-Springboot app is also connecting to the **mysqldb** which is running on the machine(ip *192.168.1.40*) on port no *3308*, outside of the cluster.
+We want to connect the Springboot to the **mysqldb** which is already running on the machine(ip *192.168.1.40*) on port no *3308*, outside of the cluster. Normally when we create a service to connect to a pod on the same name space, service internally find the ip:port of the  the pod which matches to the selector. But here we wants to connect to mysql db which is running outiside. Therefore we have to explicilty create an **Endpoints** with the ip and port on which mysql is running[4].
 
 **Mysql service's(connect to local db) kubernet file**
 ```yaml
@@ -173,3 +173,4 @@ References
 1. https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
 2. https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts
 3. https://www.bmc.com/blogs/kubernetes-port-targetport-nodeport/
+4. https://theithollow.com/2019/02/04/kubernetes-endpoints/
