@@ -5,11 +5,11 @@ date:   2020-06-13 2:32:36 +0530
 categories: Java Springboot Kubernetes ElasticSearch
 ---
 I have recently developed a demo springboot ( version 2.2.5) application which use java 11 ( using modular system introduced in java 9), an elasticsearch( version and 6.6.1) and mysql 
-(Version 8.0.17). Then I went ahead and tried to deploy it in a local kubernetes cluster. Although there was numerous tutorials about deployment in Kubernetes, I could not find a single sample application which cover all the aspects in a single place. In this article, I will briefly go through the some of the issues which I faced during the deployment and the solution for that. I am not going through all the details  of  Kubernetes deployment file I used because you can find the details in so many other places. Source code can be found [here][git-hub].
+(Version 8.0.17). Then I went ahead and tried to deploy it in a local kubernetes cluster. Although there was numerous tutorials about deployment in Kubernetes, I could not find a single sample application which cover all the aspects in a single place. In this article, I will briefly go through the some of the issues which I faced during the deployment and the solution for that. I am not going through all the details  of  Kubernetes deployment file I used because you can find the details in so many other places. 
+
+I planned to deploy the application in the following way. Mysql database will be running in the system outside of the Kubernetes cluster. Springboot app which will run in the kubernetes cluster will write some data to the database. Then elasticsearch index will create using the db data. Then finally we will search in the created  elastic search index. We will have 3 endpoints in the springboot to these action 1. **addToDb** end point will write  to the db 2. **createIndex** will load data from the db and will create the elastic search index 3.**search** will search in the elastic search index to fetch data which matches to our criteria. Source code of the springboot app can see [here][git-hub].
 
 [git-hub]: https://github.com/deleSerna/springbootelasticsearchdemo
-
-I planned to deploy the application in the following way. Mysql database will be running in the system outside of the Kubernetes cluster. Springboot app which will run in the kubernetes cluster will write some data to the database. Then elasticsearch index will create using the db data. Then finally we will search in the created  elastic search index. We will have 3 endpoints in the springboot to these action 1. **addToDb** end point will write  to the db 2. **createIndex** will load data from the db and will create the elastic search index 3.**search** will search in the elastic search index to fetch data which matches to our criteria. Source code of the springboot app can see here (TODO, need to provide a GitHub repo link).
 
 I used [minikube][mini-kube] (version 1.11.0) to run Kubernetes locally. 
 To start the minikube please  use ```minikube start```
@@ -222,7 +222,9 @@ curl --request GET "http://192.168.64.3:30302/pers/search?name=Tom&profession=Do
 output -  id:1,Name:Tom, Profession:Doctor%
 ```
 References
-1. https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
+1. https://github.com/deleSerna/springbootelasticsearchdemo 
 2. https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts
 3. https://www.bmc.com/blogs/kubernetes-port-targetport-nodeport/
 4. https://theithollow.com/2019/02/04/kubernetes-endpoints/
+5. https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
+
