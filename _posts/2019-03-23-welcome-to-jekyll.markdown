@@ -9,7 +9,7 @@ I have recently developed a demo springboot ( version 2.2.5) application which u
 
 [git-hub]: https://github.com/deleSerna/springbootelasticsearchdemo
 
-I planned to deploy the application in the following way. Mysql database will be running in the system outside of the Kubernetes cluster. Springboot app which will run in the kubernetes cluster will write some data to the database. Then elasticsearch index will create using the db data. Then finally we will search in the created  elastic search index. We will have 3 endpoints in the springboot to these action 1. CreateDbdata end point will write  to the db 2. CreateEsindex will load data from the db and will create the elastic search index 3.Search will search in the elastic search index to fetch data which matches to our criteria. Source code of the springboot app can see here (TODO, need to provide a GitHub repo link).
+I planned to deploy the application in the following way. Mysql database will be running in the system outside of the Kubernetes cluster. Springboot app which will run in the kubernetes cluster will write some data to the database. Then elasticsearch index will create using the db data. Then finally we will search in the created  elastic search index. We will have 3 endpoints in the springboot to these action 1. **addToDb** end point will write  to the db 2. **createIndex** will load data from the db and will create the elastic search index 3.**search** will search in the elastic search index to fetch data which matches to our criteria. Source code of the springboot app can see here (TODO, need to provide a GitHub repo link).
 
 I used [minikube][mini-kube] (version 1.11.0) to run Kubernetes locally. 
 To start the minikube please  use ```minikube start```
