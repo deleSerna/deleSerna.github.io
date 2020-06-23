@@ -206,17 +206,20 @@ kubectl get  endpoints
 Add data to the msyqldb ( if data does not exist in the table already)
 ```sh
 curl --request POST "http://192.168.64.3:30302/pers/addToDb"
-true
+
+output - true
 ```
 Create the elastic search index in the  ~/esdemoIndex folder 
 ```sh
  curl --request POST "http://192.168.64.3:30302/pers/createIndex?indexName=index2&indexType=demo"
-5
+ 
+output -  5
 ```
 Search for person name 'Tom' who is 'Doctor' by profession
 ```sh
 curl --request GET "http://192.168.64.3:30302/pers/search?name=Tom&profession=Doctor"
-id:1,Name:Tom, Profession:Doctor%
+
+output -  id:1,Name:Tom, Profession:Doctor%
 ```
 References
 1. https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
