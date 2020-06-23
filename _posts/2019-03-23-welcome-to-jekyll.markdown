@@ -5,7 +5,9 @@ date:   2020-06-13 2:32:36 +0530
 categories: Java Springboot Kubernetes ElasticSearch
 ---
 I have recently developed a demo springboot ( version 2.2.5) application which use java 11 ( using modular system introduced in java 9), an elasticsearch( version and 6.6.1) and mysql 
-(Version 8.0.17). Then I went ahead and tried to deploy it in a local kubernetes cluster. Although there was numerous tutorials about deployment in Kubernetes, I could not find a single sample application which cover all the aspects in a single place. In this article, I will briefly go through the some of the issues which I faced during the deployment and the solution for that. I am not going through all the details  of  Kubernetes deployment file I used because you can find the details in so many other places.
+(Version 8.0.17). Then I went ahead and tried to deploy it in a local kubernetes cluster. Although there was numerous tutorials about deployment in Kubernetes, I could not find a single sample application which cover all the aspects in a single place. In this article, I will briefly go through the some of the issues which I faced during the deployment and the solution for that. I am not going through all the details  of  Kubernetes deployment file I used because you can find the details in so many other places. Source code can be fount [here][git-hub].
+
+[git-hub]: https://github.com/deleSerna/springbootelasticsearchdemo
 
 I planned to deploy the application in the following way. Mysql database will be running in the system outside of the Kubernetes cluster. Springboot app which will run in the kubernetes cluster will write some data to the database. Then elasticsearch index will create using the db data. Then finally we will search in the created  elastic search index. We will have 3 endpoints in the springboot to these action 1. CreateDbdata end point will write  to the db 2. CreateEsindex will load data from the db and will create the elastic search index 3.Search will search in the elastic search index to fetch data which matches to our criteria. Source code of the springboot app can see here (TODO, need to provide a GitHub repo link).
 
