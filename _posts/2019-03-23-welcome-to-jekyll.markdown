@@ -5,7 +5,7 @@ date:   2020-06-13 2:32:36 +0530
 categories: Java Springboot Kubernetes ElasticSearch
 ---
 I have recently developed a demo springboot ( version 2.2.5) application which use java 11 ( using modular system introduced in java 9), an elasticsearch( version and 6.6.1) and mysql 
-(Version 8.0.17). Then I went ahead and tried to deploy it in a local kubernetes cluster. Although there was numerous tutorials about deployment in Kubernetes, I could not find a single sample application which cover all the aspects in a single place. In this article, I will briefly go through the some of the issues which I faced during the deployment and the solution for that. I am not going through all the details  of  Kubernetes deployment file I used because you can find the details in so many other places. Source code can be fount [here][git-hub].
+(Version 8.0.17). Then I went ahead and tried to deploy it in a local kubernetes cluster. Although there was numerous tutorials about deployment in Kubernetes, I could not find a single sample application which cover all the aspects in a single place. In this article, I will briefly go through the some of the issues which I faced during the deployment and the solution for that. I am not going through all the details  of  Kubernetes deployment file I used because you can find the details in so many other places. Source code can be found [here][git-hub].
 
 [git-hub]: https://github.com/deleSerna/springbootelasticsearchdemo
 
