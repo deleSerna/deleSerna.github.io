@@ -13,7 +13,7 @@ I planned to deploy the application in the following way. Mysql database will be
 
 I used [minikube][mini-kube] (version 1.11.0) to run Kubernetes locally. 
 To start the minikube please  use ```minikube start```
-Since we are using   a custom springboot application, first we have to create a docker image of the application and put it in minikube’s docker image registry.  We have to pay attention that we have to put the image in minikube’s docker image registry not in our normal local docker image registry [1].
+Since we are using   a custom springboot application, first we have to create a docker image of the application and put it in minikube’s docker image registry.  We have to pay attention that we have to put the image in minikube’s docker image registry not in our normal local docker image registry [5].
 We need to set the environment variable with eval command ```eval $(minikube docker-env)```
 ```
 eval $(minikube docker-env)
