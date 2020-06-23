@@ -14,10 +14,10 @@ To start the minikube please  use ```minikube start```
 Since we are using   a custom springboot application, first we have to create a docker image of the application and put it in minikube’s docker image registry.  We have to pay attention that we have to put the image in minikube’s docker image registry not in our normal local docker image registry [1].
 We need to set the environment variable with eval command ```eval $(minikube docker-env)```
 ```
-minikube ssh
 eval $(minikube docker-env)
-docker image build --tag=dymmyapp --rm=true .
-docker images
+docker image build --tag=springdemo --rm=true .
+minikube ssh
+docker images. #springdemo image should present
 ```
 
 Then deploy the springboot app using  ```kubectl apply -f springboot.yaml```.  It deploys the springboot app on a container which runs on port 8080 (**targetPort**). Then a service will create which expose the springboot app on port 8080. 
@@ -25,35 +25,35 @@ To connect to the springboot externally, we made it as **NodePort type**[3].
 
 [mini-kube]: https://kubernetes.io/docs/setup/learning-environment/minikube/
 
-**springboot helloworld app kubernet file**
+**springboot helloworld app kubernet file (springboot.yaml)**
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: helloworld
+  name: springdemo
   labels:
-    app: helloworld
+    app: springdemo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: helloworld
+      app: springdemo
   template:
     metadata:
       labels:
-        app: helloworld
+        app: springdemo
     spec:
       containers:
-        - name: helloworld
-          image: helloworld:latest
+        - name: springdemo
+          image: springdemo:latest
           imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: helloworld
+  name: springdemo
   labels:
-    app: helloworld
+    app: springdemo
 spec:
   ports:
     - port: 8080
@@ -62,8 +62,7 @@ spec:
   type: NodePort
 
   selector:
-    app: helloworld          
-
+    app: springdemo                   
 ```
 To connect to the service from outside cluster, we have to use NodeIp:NodePort.
 
@@ -79,13 +78,15 @@ I decided to store the elastic search indices into a local directory outside the
 *StatefulSet*[2]. To mount a local directory into a pod in minikube (version - v1.9.2), you have to mount that local directory into minikube then use minikube mounted path in [hostpath][host-path].
 [host-path]: https://minikube.sigs.k8s.io/docs/handbook/mount/
 ```
-minikube mount ~/esData:/indexdata
+mkdir -p ~/esdemoIndex
+minikube mount ~/esdemoIndex:/indexdata
 ```
 *You have to run minikube mount in a separate terminal because it starts a process and stays there until you unmount*.
 
-Another issue which I faced during mounting was elastic search server pod was throwing *java.nio.file.AccessDeniedException: /usr/share/elasticsearch/data/nodes* . To solve that, we have to use **initContainers** to set full permission in /usr/share/elasticsearch/data/nodes.
+Another issue which I faced during mounting was elastic search server pod was throwing *java.nio.file.AccessDeniedException: /usr/share/elasticsearch/data/nodes* .To solve that, we have to use **initContainers** to set full permission in /usr/share/elasticsearch/data/nodes.
 
-**elasticsearch  kubernet file**
+Then deploy the elasticsearch server  using  ```kubectl apply -f elasticStateful.yaml```
+**elasticsearch  kubernet file (elasticStateful.yaml)**
 ```yaml
 apiVersion: apps/v1
 kind: StatefulSet
@@ -144,9 +145,32 @@ spec:
   selector:
     app: elasticsearch
 ```
-We want to connect the Springboot to the **mysqldb** which is already running on the machine(ip *192.168.1.40*) on port no *3308*, outside of the cluster. Normally when we create a service to connect to a pod on the same name space, service internally find the ip:port of the  the pod which matches to the selector. But here we wants to connect to mysql db which is running outiside. Therefore we have to explicilty create an **Endpoints** with the ip and port on which mysql is running[4].
+We want to connect the Springboot to the **mysqldb** which is already running on the machine(ip *192.168.1.40*) on port no *3308*, outside of the cluster.  To run. amysql db you can use following docker-compose.yml. Please run ``` docker-compose -f docker-compose.yml up -d```
+**docker-compose.yml**
+```yaml
+version: '3'
 
-**Mysql service's(connect to local db) kubernet file**
+services:
+
+  mysql-development:
+    image: mysql:8.0.17
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dummydb
+    ports:
+      - "3308:3306"
+```
+Please create the *person_details* table on the mysql db
+```sql
+CREATE TABLE person_details (
+    persId INT  PRIMARY KEY,
+    name VARCHAR(50),
+    profession VARCHAR(50))
+ENGINE=Innodb;
+```
+Now, we will create a serivice in the kubernetes to conneect to the above mysql db. Normally when we create a service to connect to a pod on the same name space, service internally find the ip:port of the  the pod which matches to the selector. But here we wants to connect to mysql db which is running outiside. Therefore we have to explicilty create an **Endpoints** with the ip and port on which mysql is running[4].
+Then deploy the mysql services  using  ```kubectl apply -f mysqlService.yaml```.
+**Mysql service's(connect to local db) kubernet file (mysqlService.yaml)**
 ```yaml
 apiVersion: v1
 kind: Service
@@ -168,7 +192,30 @@ subsets:
         - ip: 192.168.1.40
       ports:
         - port: 3308  
-```        
+```  
+Please check the status of pods, deployments, statefulsets, services to ensure that everythings works fine
+```sh
+kubectl get pods
+kubectl get deployments
+kubectl get services
+kubectl get StatefulSets
+kubectl get  endpoints
+```
+Add data to the msyqldb ( if data does not exist in the table already)
+```sh
+curl --request POST "http://192.168.64.3:30302/pers/addToDb"
+true
+```
+Create the elastic search index in the  ~/esdemoIndex folder 
+```sh
+ curl --request POST "http://192.168.64.3:30302/pers/createIndex?indexName=index2&indexType=demo"
+5
+```
+Search for person name 'Tom' who is 'Doctor' by profession
+```sh
+curl --request GET "http://192.168.64.3:30302/pers/search?name=Tom&profession=Doctor"
+id:1,Name:Tom, Profession:Doctor%
+```
 References
 1. https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
 2. https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts
