@@ -210,28 +210,31 @@ kubectl get  endpoints
 ```
 If status of every kubernet entity is fine then we can connect to the endpoints of the springboot app. 
 
-1.To **add data** to the msyqldb (if the data does not exist in the table already)
+1) To **add data** to the msyqldb (if the data does not exist in the table already)
 ```sh
 curl --request POST "http://192.168.64.3:30302/pers/addToDb"
 
 output - true
 ```
-2. To **create the elastic search index** in the  ~/esdemoIndex folder 
+2) To **create the elastic search index** in the  ~/esdemoIndex folder 
 ```sh
  curl --request POST "http://192.168.64.3:30302/pers/createIndex?indexName=index2&indexType=demo"
  
 output -  5
 ```
-3. To **search** for person name 'Tom' who is 'Doctor' by profession
+
+3) To **search** for person name 'Tom' who is 'Doctor' by profession
 ```sh
 curl --request GET "http://192.168.64.3:30302/pers/search?name=Tom&profession=Doctor"
 
 output -  id:1,Name:Tom, Profession:Doctor%
 ```
 **References**
-1. https://github.com/deleSerna/springbootelasticsearchdemo 
-2. https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts
+1. [https://github.com/deleSerna/springbootelasticsearchdemo][ref-1]
+2. [https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts][ref-2]
 3. https://www.bmc.com/blogs/kubernetes-port-targetport-nodeport/
 4. https://theithollow.com/2019/02/04/kubernetes-endpoints/
 5. https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
 
+[ref-1]: https://github.com/deleSerna/springbootelasticsearchdemo
+[ref-2]: https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts
