@@ -12,7 +12,7 @@ I planned to deploy the application in the following way. Mysql database will be
 [git-hub]: https://github.com/deleSerna/springbootelasticsearchdemo
 
 
-![Deployment diagram](../assets/images/2019-03-23-springboot/springbootonkubernetes.png)
+![Deployment diagram](/assets/images/2019-03-23-springboot/springbootonkubernetes.png)
 
 I used [minikube][mini-kube] (version 1.11.0) to run kubernetes locally. 
 To start the minikube, please  use ```minikube start```.
