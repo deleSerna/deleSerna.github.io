@@ -7,9 +7,12 @@ categories: Java Springboot Kubernetes ElasticSearch
 I have recently developed a demo **springboot (version 2.2.5)** application which use **java 11** (using **modular system** introduced in java 9), an **elasticsearch (version and 6.6.1)** and **mysql 
 (version 8.0.17)**. Then I went ahead and tried to deploy it in a local **kubernetes** cluster (using minikube). Although, there were numerous tutorials about deployment in kubernetes, I could not find a sample application which cover all the aspects which I requires in a single place. In this article, I will briefly go through the some of the issues which I faced during the deployment and the solutions for that ( ofcourse, which I got it from other sources). I am not going through all the details of the kubernetes deployment file which I used because you can find the details in so many other places. 
 
-I planned to deploy the application in the following way. Mysql database will be running in the system outside of the kubernetes cluster. Springboot app which will run in the kubernetes cluster will write some data to the database. Then elasticsearch index will create using this db data. Then, finally we will search in the created  elastic search index from springboot app. We will have 3 endpoints in the springboot do these actions 1. **addToDb** end point will write  to the db 2. **createIndex** will load data from the db and will create the elastic search index 3. **search** will search in the elastic search index to fetch data which match to our criteria. Source code of the springboot app can see [here][git-hub].
+I planned to deploy the application in the following way. Mysql database will be running in the system outside of the kubernetes cluster. Springboot app which will run in the kubernetes cluster will write some data to the database. Then elasticsearch index will create using this db data. Then, finally we will search in the created  elastic search index from springboot app. We will have 3 endpoints in the springboot do these actions 1. **addToDb** end point will write  to the db 2. **createIndex** will load data from the db and will create the elastic search index 3. **search** will search in the elastic search index to fetch data which match to our criteria. Source code of the springboot app can see [here][git-hub]. Please see the deployment digaram of the application.
 
 [git-hub]: https://github.com/deleSerna/springbootelasticsearchdemo
+
+
+![Deployment diagram](../assets/images/2019-03-23-springboot/springbootonkubernetes.png)
 
 I used [minikube][mini-kube] (version 1.11.0) to run kubernetes locally. 
 To start the minikube, please  use ```minikube start```.
