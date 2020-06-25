@@ -232,9 +232,12 @@ output -  id:1,Name:Tom, Profession:Doctor%
 **References**
 1. [https://github.com/deleSerna/springbootelasticsearchdemo][ref-1]
 2. [https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts][ref-2]
-3. https://www.bmc.com/blogs/kubernetes-port-targetport-nodeport/
-4. https://theithollow.com/2019/02/04/kubernetes-endpoints/
-5. https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
+3. [https://www.bmc.com/blogs/kubernetes-port-targetport-nodeport/][ref-3]
+4. [https://theithollow.com/2019/02/04/kubernetes-endpoints/][ref-4]
+5. [https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968][ref-5]
 
 [ref-1]: https://github.com/deleSerna/springbootelasticsearchdemo
 [ref-2]: https://www.magalix.com/blog/kubernetes-statefulsets-101-state-of-the-pods#:~:text=A%20StatefulSet%20is%20another%20Kubernetes,more%20suited%20for%20stateful%20apps.&text=By%20nature%2C%20a%20StatefulSet%20needs,state%20and%20data%20across%20restarts
+[ref-3]: https://www.bmc.com/blogs/kubernetes-port-targetport-nodeport/
+[ref-4]: https://theithollow.com/2019/02/04/kubernetes-endpoints/
+[ref-5]: https://medium.com/bb-tutorials-and-thoughts/how-to-use-own-local-doker-images-with-minikube-2c1ed0b0968
