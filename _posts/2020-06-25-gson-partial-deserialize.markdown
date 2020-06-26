@@ -11,12 +11,12 @@ I have recently come across a rather cool feature of [gson][google-gson]. I like
 ```json
 "{age:20,name:john, address:{street:MainStreet,city:newyork},gender:male}"
 ```
-If we plan to deserialze above json using gson, the first design to come our mind will be creating **Person** with **Address** as follows.
+If we plan to deserialze above json using *gson*, the first design to come in our mind will be creating **Person** with **Address** as follows.
 
 ```java
 
 public class Person {
-        int age;
+	int age;
 	String name;
 	Address address;
 	Gender gender;
@@ -72,7 +72,8 @@ public Person deserialize(JsonElement paramJsonElement, Type paramType,
 As another side note, if we want to deserilaize **enum** from it's value, we can do that if we annotate the enum with it's value using ```@SerializedName```.
 The whole example  which I tried with *gson*(**2.8.5**) is shown below.
 
-** Person.java**
+** Person.java **
+
 ```java
 package com.example.demo;
 
@@ -122,7 +123,8 @@ public class Person {
 
 }
 ```
-** Gender.java**
+** Gender.java **
+
 ```java
 package com.example.demo;
 
@@ -144,7 +146,8 @@ public enum Gender {
 	}
 }
 ```
-** TestPersonDeserialize.java**
+** TestPersonDeserialize.java **
+
 ``` java
 package com.example.demo;
 
