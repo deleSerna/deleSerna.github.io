@@ -5,13 +5,13 @@ date:   2020-06-13 2:32:36 +0530
 categories: Java Springboot Kubernetes ElasticSearch
 ---
 I have recently developed a demo **springboot (version 2.2.5)** application which use **java 11** (using **modular system** introduced in java 9), an **elasticsearch (version and 6.6.1)** and **mysql 
-(version 8.0.17)**. Then I went ahead and tried to deploy it in a local **kubernetes** cluster (using minikube). Although, there were numerous tutorials about deployment in kubernetes, I could not find a sample application which cover all the aspects which I requires in a single place. In this article, I will briefly go through the some of the issues which I faced during the deployment and the solutions for that ( ofcourse, which I got it from other sources). I am not going through all the details of the kubernetes deployment file which I used because you can find the details in so many other places. 
+(version 8.0.17)**. Then I went ahead and tried to deploy it in a local **kubernetes** cluster (using **minikube**). Although, there were numerous tutorials about deployment in kubernetes, I could not find a sample application which cover all the aspects which I requires in a single place. In this article, I will briefly go through the some of the issues which I faced during the deployment and the solutions for that ( ofcourse, which I got it from other sources). I am not going through all the details of the kubernetes deployment file which I used because you can find the details in so many other places. 
 
 {% if post.excerpt != post.content %}
     <a href="{{ site.baseurl }}{{ post.url }}">Read more</a>
 {% endif %}
 
-I planned to deploy the application in the following way. Mysql database will be running in the system outside of the kubernetes cluster. Springboot app which will run in the kubernetes cluster will write some data to the database. Then elasticsearch index will create using this db data. Then, finally we will search in the created  elastic search index from springboot app. We will have 3 endpoints in the springboot do these actions 1. **addToDb** end point will write  to the db 2. **createIndex** will load data from the db and will create the elastic search index 3. **search** will search in the elastic search index to fetch data which match to our criteria. Source code of the springboot app can see [here][git-hub]. Please see the deployment digaram of the application.
+I planned to deploy the application in the following way. **Mysql** database will be running outside of the kubernetes cluster. **Springboot app** will  run in the kubernetes cluster and will write some data to the above database. Then elasticsearch indices will create using this db data. Then, finally we will search in the created  elastic search indices from springboot app. We will have 3 endpoints in the springboot do these actions 1. **addToDb** end point will write  to the db 2. **createIndex** will load data from the db and will create the elastic search indices 3. **search** will search in this elastic search indices to fetch data which match to our criteria. Source code of the springboot app can see [here][git-hub]. Please see the deployment digaram of the application.
 
 [git-hub]: https://github.com/deleSerna/springbootelasticsearchdemo
 
@@ -26,10 +26,10 @@ To do that we have to set docker-env environment variables with *eval* command `
 eval $(minikube docker-env)
 docker image build --tag=springdemo --rm=true .
 minikube ssh
-docker images. #springdemo image should present
+docker images #springdemo image should present
 ```
 
-Then deploy the springboot app using  ```kubectl apply -f springboot.yaml```. It deploys the springboot app on a container which runs on *port 8080* (**targetPort**) and a service(**springdemo**) will create which connect to the springboot app. Service *springdemoService* is created as **NodePort type** [3] so that a user can connect to it from externally using the *nodeport*.
+Then execute ```kubectl apply -f springboot.yaml```. It deploys the springboot app on a container which runs on *port 8080* (**targetPort**) and a service(**springdemo**) which connects to the springboot app. Service *springdemoService* is created as **NodePort type** [3] so that a user can connect to it from externally using the *nodeport*.
 
 [mini-kube]: https://kubernetes.io/docs/setup/learning-environment/minikube/
 
@@ -89,14 +89,14 @@ To mount a local directory into a pod in minikube, you have to mount that local 
 
 [host-path]: https://minikube.sigs.k8s.io/docs/handbook/mount/
 ```
-mkdir -p ~/esdemoIndex
-minikube mount ~/esdemoIndex:/indexdata
+mkdir -p ~/esdemoIndex. # create the directory in the local system
+minikube mount ~/esdemoIndex:/indexdata.  #mount it into minikube
 ```
 **You have to run minikube mount in a separate terminal because it starts a process and stays there until you unmount**.
 
 Another issue which I faced during mounting was elastic search server pod was throwing *java.nio.file.AccessDeniedException: /usr/share/elasticsearch/data/nodes* .To solve that, we have to set full permission in /usr/share/elasticsearch/data/nodes. Please see  **initContainers** section in the **elasticStateful.yaml**.
 
-Then deploy the elasticsearch server  using  ```kubectl apply -f elasticStateful.yaml```.
+Then deploy the elasticsearch server and service to connect it using  using  ```kubectl apply -f elasticStateful.yaml```.
 
 **elasticsearch  kubernet file (elasticStateful.yaml)**
 ```yaml
@@ -157,7 +157,7 @@ spec:
   selector:
     app: elasticsearch
 ```
-We need to connect the springbootapp to the **mysqldb** which is already running on the machine(ip **192.168.1.40**) on port no **3308**, outside of the cluster.  To set up a mysql db you can use following **docker-compose.yml**. Please run ``` docker-compose -f docker-compose.yml up -d``` to startup a mysqldb.
+Now we need to setup a **mysqldb** outside of the kubernetes cluster. To set up a mysql db you can use following **docker-compose.yml**. Please run ``` docker-compose -f docker-compose.yml up -d``` to startup a mysqldb on port no **3308**.
 
 **docker-compose.yml**
 ```yaml
@@ -173,7 +173,7 @@ services:
     ports:
       - "3308:3306"
 ```
-Please create the *person_details* (this table's data will be used by elastic search server to create the indices) table on the mysql db.
+Please create the **person_details** (this table's data will be used by elasticsearch server to create the indices) table on the mysql db.
 ```sql
 CREATE TABLE person_details (
     persId INT  PRIMARY KEY,
@@ -181,8 +181,8 @@ CREATE TABLE person_details (
     profession VARCHAR(50))
 ENGINE=Innodb;
 ```
-Now, we will create a service(**mysql-service**)  to conneect to the above mysql db. Normally, when we create a service to connect to a pod on the same namespace, service will internally find the **ip:port** of the the pod which matches to the selector criteria. But here, we wants to connect to mysql db which is running outiside. Therefore we have to explicilty create an **Endpoints** with the ip and port on which mysql is running[4].
-Please deploy the mysql services  using  ```kubectl apply -f mysqlService.yaml```.
+Now, we will create a service(**mysql-service**)  to conneect to the above mysql db. Normally, when we create a service to connect to a pod on the same namespace, service will internally find the **ip:port** of the the pod which matches to the selector criteria. But here, we wants to connect to mysql db which is running outiside. Therefore we have to explicilty create an **Endpoints** with the ip and port on which mysql is running [4].
+Please deploy the mysql services using ```kubectl apply -f mysqlService.yaml```.
 
 **Mysql service's(connect to local db) kubernet file (mysqlService.yaml)**
 ```yaml
@@ -203,7 +203,7 @@ metadata:
     name: mysql-service
 subsets:
     - addresses:
-        - ip: 192.168.1.40
+        - ip: 192.168.1.40 
       ports:
         - port: 3308  
 ```  
@@ -215,7 +215,7 @@ kubectl get services
 kubectl get StatefulSets
 kubectl get  endpoints
 ```
-If status of every kubernet entity is fine then we can connect to the endpoints of the springboot app. 
+If status of every kubernet entity is fine then we can connect to the endpoints of the springboot app.  We have to use the NodeIp:NodePort combintion to connect to the services.
 
 1) To **add data** to the msyqldb (if the data does not exist in the table already)
 ```sh
