@@ -49,7 +49,7 @@ As shown in the exception, *gson* expected a string but it saw a begining of Obj
 Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
 				.create();
 ```
-If we try to deserialize it as ```gson.fromJson(personJson, Person.class)```, then Person object will create successfully but **address** filed will be **null**.
+If we try to deserialize it as ```gson.fromJson(personJson, Person.class)```, then Person object will create successfully but **address** field will be **null**.
 It's expected as we told the *gson* to ignore *address* field. To get the string value of *address*, we have to write our own Deserilaizer, which will manually set the *address* field.
 
 ```
