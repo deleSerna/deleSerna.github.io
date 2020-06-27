@@ -181,7 +181,7 @@ CREATE TABLE person_details (
     profession VARCHAR(50))
 ENGINE=Innodb;
 ```
-Now, we will create a service(**mysql-service**)  to conneect to the above mysql db. Normally, when we create a service to connect to a pod on the same namespace, service will internally find the **ip:port** of the the pod which matches to the selector criteria. But here, we wants to connect to mysql db which is running outiside. Therefore we have to explicilty create an **Endpoints** with the ip and port on which mysql is running [4].
+Now, we will create a service(**mysql-service**)  to conneect to the above mysql db. Normally, when we create a service to connect to a pod on the same namespace, service will internally find the **ip:port** of the the pod which matches to the selector criteria. But here, we wants to connect to mysql db which is running outiside. Therefore we have to explicilty create an **Endpoints** with the ip (local machine's ip) and port on which mysql is running [4].
 Please deploy the mysql services using ```kubectl apply -f mysqlService.yaml```.
 
 **Mysql service's(connect to local db) kubernet file (mysqlService.yaml)**
