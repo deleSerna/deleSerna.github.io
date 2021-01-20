@@ -10,7 +10,8 @@ I have recently developed a custom rasa chat bot by following [rasa tutorial][ra
 Once you are ready with the chat bot, we should deploy rasa core server in one docker container and action server in another. 
 
 We will first create the action server's image by following [link][rasa-2]. We copy **action** file into a separate action folder and dependency will be added in the requirements file.
-[rasa-2]:https://rasa.com/docs/rasa/user-guide/how-to-deploy/#building-an-action-server-image
+
+[rasa-2]:https://rasa.com/docs/rasa/user-guide/how-to-deploy/#building-an-action-server-image/
 **rasa action server docker file**
 
 ```
