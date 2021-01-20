@@ -53,9 +53,9 @@ You can see that **B.java** depends on **C.java** and **Greeter.java**.
 Now if we compile **B.java** by ```javac b/B.java```  then you can see that two class files **B.class** and **C.class** were created inside **b**.
 Then if we compile **Greeter.java** by ```javac  hello/Greeter.java``` then you can see that **Greeter.class** was created inside **hello**.
 
-Then if we run  ```java hello.Greeter``` then  it will print **Hello world!11**
+Then if we run by ```java hello.Greeter``` then  it will print **Hello world!11**
 
-Now we will create a new folder ** f** and will move **C.class** from **b** to **f**.
+Now we will create a new folder **f** and will move **C.class** from **b** to **f**.
 Then if we recompile ```javac  hello/Greeter.java```  then we can see that it's compiling suceessfully but if we run **Greeter**
  ```java hello.Greeter``` then we can see some run time error.
 
@@ -73,7 +73,7 @@ Caused by: java.lang.ClassNotFoundException: b.C
  of compiling **Greeter.java**, it wont throw compilation error because **Greeter.java** depends only on **B.class** and that's avaialble in **b**.
  But at run time  **Greeter.class** instance invokes **B.class**  but **B.class** needs **C.class** for running but it can not find **C.class** in the directory ( in the provided class path).
  That's why it's failing. Therefore to make it working, we will add  **f/C.class** in the runtime class path as
- ``` java -cp f:.  hello.Greeter
+ ```java -cp f:.  hello.Greeter```
 
 ``` and you can see that it's printing *** Hello world!11*** as expected
  
