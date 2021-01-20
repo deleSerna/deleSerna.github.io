@@ -96,7 +96,7 @@ minikube mount ~/esdemoIndex:/indexdata.  #mount it into minikube
 
 Another issue which I faced during mounting was elastic search server pod was throwing *java.nio.file.AccessDeniedException: /usr/share/elasticsearch/data/nodes* .To solve that, we have to set full permission in /usr/share/elasticsearch/data/nodes. Please see  **initContainers** section in the **elasticStateful.yaml**.
 
-Then deploy the elasticsearch server and service to connect it using  using  ```kubectl apply -f elasticStateful.yaml```.
+Then deploy the elasticsearch server and service to connect it using ```kubectl apply -f elasticStateful.yaml```.
 
 **elasticsearch  kubernet file (elasticStateful.yaml)**
 ```yaml
@@ -181,7 +181,7 @@ CREATE TABLE person_details (
     profession VARCHAR(50))
 ENGINE=Innodb;
 ```
-Now, we will create a service(**mysql-service**)  to conneect to the above mysql db. Normally, when we create a service to connect to a pod on the same namespace, service will internally find the **ip:port** of the the pod which matches to the selector criteria. But here, we wants to connect to mysql db which is running outiside. Therefore we have to explicilty create an **Endpoints** with the ip (local machine's ip) and port on which mysql is running [4].
+Now, we will create a service (**mysql-service**)  to connect to the above mysql db. Normally, when we create a service to connect to a pod on the same namespace, service will internally find the **ip:port** of the the pod which matches to the selector criteria. But here, we wants to connect to mysql db which is running outiside. Therefore we have to explicilty create an **Endpoints** with the ip (local machine's ip) and port on which mysql is running [4].
 Please deploy the mysql services using ```kubectl apply -f mysqlService.yaml```.
 
 **Mysql service's(connect to local db) kubernet file (mysqlService.yaml)**
