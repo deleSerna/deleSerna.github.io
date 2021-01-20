@@ -73,7 +73,5 @@ Caused by: java.lang.ClassNotFoundException: b.C
  of compiling **Greeter.java**, it wont throw compilation error because **Greeter.java** depends only on **B.class** and that's avaialble in **b**.
  But at run time  **Greeter.class** instance invokes **B.class**  but **B.class** needs **C.class** for running but it can not find **C.class** in the directory ( in the provided class path).
  That's why it's failing. Therefore to make it working, we will add  **f/C.class** in the runtime class path as
- ```java -cp f:.  hello.Greeter```
-
-``` and you can see that it's printing *** Hello world!11*** as expected
+ ```java -cp f:.  hello.Greeter```and you can see that it's printing *** Hello world!11*** as expected
  
