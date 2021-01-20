@@ -4,11 +4,12 @@ title:  "Deploy rasa server, custom action server and chatbot ui"
 date:   2020-07-10 23:40:36 +0530
 categories: rasa chatbot docker-decompose
 ---
-I have recently developed a custom rasa chat bot by following https://rasa.com/docs/rasa/user-guide/building-assistants/. I went bit further than explained in the tutorial and created custom action which depend on a **duckling server** and connected a chat ui to talk to the bot. When I tried to deploy the all these together using **docker-compose**, I could not find a resource which directly explain how to create custom images of my chat bot and deploy it. Therefore I thought of sharing docker files which I used. I am not going through how to create a custom chat bot because that's nicely explained in https://rasa.com/docs/rasa/user-guide/building-assistants/. 
+I have recently developed a custom rasa chat bot by following [rasa tutorial][rasa-1]. I went bit further than explained in the tutorial and created custom action which depend on a **duckling server** and connected a chat ui to talk to the bot. When I tried to deploy the all these together using **docker-compose**, I could not find a resource which directly explain how to create custom images of my chat bot and deploy it. Therefore I thought of sharing docker files which I used. I am not going through how to create a custom chat bot because that's nicely explained in https://rasa.com/docs/rasa/user-guide/building-assistants/. 
 
+[rasa-1]:https://rasa.com/docs/rasa/user-guide/building-assistants/
 Once you are ready with the chat bot, we should deploy rasa core server in one docker container and action server in another. 
 
-We will first craete action server's image by following https://rasa.com/docs/rasa/user-guide/how-to-deploy/#building-an-action-server-image. We copy action file into a separate action folder and dependency will added in requirements file.
+We will first create action server's image by following https://rasa.com/docs/rasa/user-guide/how-to-deploy/#building-an-action-server-image. We copy action file into a separate action folder and dependency will added in requirements file.
 
 **rasa action server docker file**
 
@@ -103,7 +104,7 @@ COPY index.html /usr/share/nginx/html
 
 ```
 
-Finally, we will deploy everything together using a docker-compose as follows. If deploy went then we can access the chat ui using  http://localhost/ and talk to the bot.
+Finally, we will deploy everything together using a docker-compose as follows. If deploy went fine then we can access the chat ui using  http://localhost/ and talk to the bot.
 
 **docker-compose.yaml**
 ```
