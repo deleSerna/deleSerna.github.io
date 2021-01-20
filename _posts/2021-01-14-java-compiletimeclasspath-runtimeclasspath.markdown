@@ -4,8 +4,9 @@ title:  "Java compile time dependency vs runtime dependency"
 date:   2021-01-14 22:57:36 +0530
 categories: Java 
 ---
-I have recently reading the **api vs implementaion** configuration of gradle [here] [gradle-apiimple]. Then I thought that it will be very useful to create  some simple java programs which can easily explain the difference between compile time depencies and run time depencies. For that purpose, I have created some dummy
+I have recently reading the **api vs implementaion** configuration of gradle [here][gradle-apiimple]. Then I thought that it will be very useful to create  some simple java programs which can easily explain the difference between compile time depencies and run time depencies. For that purpose, I have created some dummy
 classes just to intoroduce the concepts.
+
 [gradle-apiimple]: https://tomgregory.com/how-to-use-gradle-api-vs-implementation-dependencies-with-the-java-library-plugin/
 
 Create a folder  **b** and create two classes **B.java** and **C.java** inside it
