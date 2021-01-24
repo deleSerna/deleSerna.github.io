@@ -28,8 +28,8 @@ refer some other source which I found just before installing pyenv in a new syst
 ``` pyenv virtualenv 3.9.0 your-virtual-env-name```
 7. You can see the created your-virtual-env-name by 
 ``` ls ~/.pyenv/versions ```
-8. Open ~/.bash_profile and paste following commands, otherwise when we try to activate the create virtual environment we will get the following issue 
-" pyenv-virtualenv has not been loaded into your shell properly"
+8. Open **~/.bash_profile** and paste following commands, otherwise when we try to activate the created virtual environment we will get the following issue 
+"pyenv-virtualenv has not been loaded into your shell properly"
   ```eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 ```
