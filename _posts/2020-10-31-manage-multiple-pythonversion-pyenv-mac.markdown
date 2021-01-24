@@ -36,10 +36,10 @@ eval "$(pyenv virtualenv-init -)"
 9. Run bashrc by
 ``` source  ~/.bash_profile ```
 
-10 Now activate your virtual env by
+10. Now activate your virtual env by
 ``` pyenv activate your-virtual-env-name ```
 
-11 If you want to remove your virtual env the you can simply remove the folder in ```~/.pyenv/versions/virtual-env-name```
+11. If you want to remove your virtual env the you can simply remove the folder in ```~/.pyenv/versions/virtual-env-name```
 
 
 **References**
