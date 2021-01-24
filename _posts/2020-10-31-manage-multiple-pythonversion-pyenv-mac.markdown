@@ -24,7 +24,7 @@ refer some other source which I found just before installing pyenv in a new syst
 ``` pyenv install --list ```
 5. Install some version which you would like to work on by specify that version
 ``` pyenv install 3.9.0```
-6.  To create a virtualenv for the desire python version
+6.  To create a virtualenv for the desired python version
 ``` pyenv virtualenv 3.9.0 your-virtual-env-name```
 7. You can see the created your-virtual-env-name by 
 ``` ls ~/.pyenv/versions ```
@@ -39,7 +39,7 @@ eval "$(pyenv virtualenv-init -)"
 10 Now activate your virtual env by
 ``` pyenv activate your-virtual-env-name ```
 
-11 If you want to remove your virtual env the you can simply remove the folder in ~/.pyenv/versions/virtual-nev-name
+11 If you want to remove your virtual env the you can simply remove the folder in ```~/.pyenv/versions/virtual-env-name```
 
 
 **References**
