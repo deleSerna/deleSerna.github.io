@@ -1,0 +1,157 @@
+---
+layout: post
+title:  "Create a standalone gradle plugin"
+date:   2022-01-23 23:01:36 +02
+categories: Gradle, plugin 
+published: false
+---
+
+There are 3 ways to create a custom gradle plugin [1] 
+- Add custom classes to the build.gradle [1]
+- Add the custom class to buildSrc folder and use it in the build.gradle as here [2].
+- Create a standalone project and use it in an app as here [3].
+
+1 and 2 is straight forward as explained in the linked resource where as 3 seemed to me more relevant as that's the approach we need to follow
+if we want to create publishable gradle plugin.
+
+* Write a custom plugin class *
+
+- Create a a java project in 1/2 but add our custom gradle plugin classs a java source class in a package
+
+```java
+
+package org.example;
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+public class GreetingPlugin implements Plugin<Project> {
+    public void apply(Project project)
+    {
+        project.task("hello").doLast(task -> {
+         System.out.println("Hello from the GreetingPlugin");
+                                     }
+        );
+    }
+}
+
+```
+
+* Update build.gradle of your custom gradle class *
+Add a *gradlePlugin* block with necessary details and publish it to a local maven reppository (or remote) by running ./gradlew publishToMavenLocal task.
+
+```groovy
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+dependencies {
+    compile gradleApi()
+}
+group 'net.ntv'
+version '0.1'
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'org.example.greeting'
+            implementationClass = 'org.example.GreetingPlugin'
+        }
+    }
+}
+
+publishing {
+    repositories {
+        mavenLocal() // Publish the gradlexp2-0.1.jar, gradlexp2-0.1.module	and gradlexp2-0.1.pom to ~/.m2/repository/net/ntv/gradlexp2/0.1/
+    }
+}
+```
+* Use the published plugin an app*
+
+Create an android app, update settings.gradle ( with maven local), root level build.gradle and app level build.gradle
+
+```settings.gradle
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+        gradlePluginPortal()
+    }
+}
+rootProject.name = "MyGradle"
+include ':app'
+
+```
+
+```root level build.gradle
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        //maven { url uri("/Users/nadeeshtv/work/tickets/gradlexp2/build/repo/org.gradle.sample/project1-sample/1.1/") }
+        mavenLocal()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.0.3"
+        classpath group: 'net.ntv', name: 'gradlexp2', version: '0.1'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+``` app level build.gradle
+plugins {
+    id 'com.android.application'
+    id 'org.example.greeting'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        applicationId "com.example.mygradle"
+        minSdk 30
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
+```
+**References**
+1. [https://docs.gradle.org/current/userguide/custom_plugins.html][ref-1]
+2. [https://github.com/eugenp/tutorials/blob/master/gradle/plugin/build.gradle][ref-2]
+3. [https://github.com/ChrisLMerrill/update4j-gradle-plugin][ref-3]
