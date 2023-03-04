@@ -8,4 +8,4 @@ published: false
  Buffer overflow is the most common form of attack. A basic sample can be find
  [here][git-hub-simple-bo].
 
-[git-hub]: https://github.com/deleSerna/exercises/blob/master/C-samples/BufferOverflow/SimpleBufferOverflow.c
+[git-hub-simple-bo]: https://github.com/deleSerna/exercises/blob/master/C-samples/BufferOverflow/SimpleBufferOverflow.c
