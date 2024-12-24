@@ -82,7 +82,7 @@ If we follow the same procedure by modifying the server to use `Executors.newFix
    - When it executes a native method or a foreign function.
      - Native method can’t be supported because Loom works by unwinding the stack into the heap (roughly speaking). Doing that requires metadata describing what’s on the stack and where, which has to be produced by the JIT compiler. Native frames were produced by a non-JVM compiler and lack that metadata, so can’t be unwound. 
    - When it executes code inside a synchronized block or method (till Java 23).
-     - This is mostly due to the how `synchronized` is implemented as mentioned [here](https://openjdk.org/jeps/491#Future:~:text=The%20reason%20for%20pinning). It is changed in this [pul request](https://github.com/openjdk/jdk/pull/21565). 
+     - This is mostly due to the how `synchronized` is implemented as mentioned [here](https://openjdk.org/jeps/491#Future:~:text=The%20reason%20for%20pinning). It is changed in this [pull request](https://github.com/openjdk/jdk/pull/21565). 
    - Other cases are mentioned [here](https://openjdk.org/jeps/491#Future:~:text=while%20holding%20locks.-,Future%20Work,-There%20are%20a).
    
 
