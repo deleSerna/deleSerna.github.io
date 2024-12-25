@@ -1,22 +1,16 @@
-Version: 1.95.3 (Universal)
-Commit: f1a4fb101478ce6ec82fe9627c43efbf9e98c813
-Date: 2024-11-13T14:50:04.152Z
-Electron: 32.2.1
-ElectronBuildId: 10427718
-Chromium: 128.0.6613.186
-Node.js: 20.18.0
-V8: 12.8.374.38-electron.0
-OS: Darwin x64 23.0.0---
-layout: post
-title:  "Virtual threads overview"
-date:   2024-10-22 16:51:10 +01
-categories: java, virtual threads, 
-published: false
 ---
- Virtual thread is originally introduced as a preview feature in Java 19 as part of [JEP 425][jep-425] and has added as a stable feature in Java 21.
- - It is not inherentally fast compared to normal java thread (aka platform thread).
+layout: post
+title:  "Virtual threads overview - not a 101"
+date:   2024-12-25 06:30:10 +02
+categories: java, virtual threads, pinning, carrier thread, platform thread 
+published: true
+---
+**Disclaimer**: Do not use this write up as a 101 source for virtual threads but instead read it once you have read other 101 write ups about it to clarify some of your lingering questions in your mind afterwards.
+ Virtual thread is originally introduced as a preview feature in Java 19 as part of [JEP 425](https://openjdk.org/jeps/425) and has added as a stable feature in Java 21.
+ Some key points to note down are - 
+ - It is not inherentally fast compared to normal java thread (will call it as `platform thread` from here onwards).
  - Only useful, if tasks are mix of CPU and IO bound. If it is CPU bound then  it wont be better than platform threads.
- - It shhould not be pooled as it's only meant to use for some short lived synchronous tasks.
+ - It should not be pooled as it's only meant to use for some short lived synchronous tasks.
 
 **Limiting factors of current threads in java are** 
   - The number of available threads are limited because the JDK implements threads as wrappers around operating system (OS)  
@@ -29,7 +23,7 @@ published: false
    Number of java libraries are changed it's internal implementation to support this non blocking operations by using NIO (eg: [JEP-353](https://openjdk.org/jeps/353), [JEP-373](https://openjdk.org/jeps/373) etc.) 
    or using `ReentrantLock` instead of `synchronized block`. 
    
-   [Here](https://github.com/deleSerna/javanewfeatures/blob/main/java23/virtualthread/src/IoEchoThreadPoolServer.java#L20), I have adapted a small NIO based client server program using Virtual Thread to understand the chnages in the ServerSocket api for virtual thread.
+   [Here](https://github.com/deleSerna/javanewfeatures/blob/main/java23/virtualthread/src/IoEchoThreadPoolServer.java#L20), I have adapted a small NIO based client server program using Virtual Thread to understand the changes in the ServerSocket api for virtual thread.
    
    Steps to follow
    1. Start IoEchoThreadPoolServer.
@@ -69,18 +63,18 @@ If we follow the same procedure by modifying the server to use `Executors.newFix
 
   <!-- If you do `Thread.sleep(Duration.ofSeconds(1))` then  the virtual thread is actually sleeping. Not sure about the platform thread. -->
    The identity of the carrier is unavailable to the virtual thread. The value returned by `Thread.currentThread()` is always the virtual thread itself.
-   Virtual threads set to daemon thread as mostly because implenetors don't want it to interact with the shutdown sequence otherwise program would not need to wait for 1000s of virtual threads to be shut down.
+   Virtual threads is set to daemon thread as mostly because implementors don't want it to interact with the shutdown sequence otherwise program would need to wait for 1000s of virtual threads to be shut down and programmers could wait up on it's completion in other way as shown in [here](https://github.com/deleSerna/javanewfeatures/blob/main/java23/virtualthread/src/IoEchoThreadPoolServer.java#L20).
    <!-- How to make  thread-local data accidentally leaking from one task to another? -->
 
 
    The vast majority of blocking operations in the JDK will unmount the virtual thread, freeing its carrier and the underlying OS thread to take on new work.
    However, some blocking operations in the JDK do not unmount the virtual thread, and thus block both its carrier and the underlying OS thread. 
-   This is because of limitations either at the OS level (e.g., many filesystem operations) or at the JDK level (e.g., Object.wait()). 
-   The maximum number of platform threads available to the scheduler can be tuned with the system property jdk.virtualThreadScheduler.maxPoolSize
+   This is because of limitations either at the OS level or at the JDK level (e.g., Object.wait()). 
+   The maximum number of platform threads available to the scheduler can be tuned with the system property jdk.virtualThreadScheduler.maxPoolSize to increase the avaialble threads in those cases.
 
    There are a couple of scenarios in which a virtual thread cannot be unmounted during blocking operations because it is pinned to its carrier:
    - When it executes a native method or a foreign function.
-     - Native method can’t be supported because Loom works by unwinding the stack into the heap (roughly speaking). Doing that requires metadata describing what’s on the stack and where, which has to be produced by the JIT compiler. Native frames were produced by a non-JVM compiler and lack that metadata, so can’t be unwound. 
+     - Native method can’t be supported because virtual threrad implementation works by unwinding the stack into the heap. Doing that requires metadata describing what’s on the stack and where, which has to be produced by the JIT compiler. Native frames were produced by a non-JVM compiler and lack that metadata, so can’t be unwound. 
    - When it executes code inside a synchronized block or method (till Java 23).
      - This is mostly due to the how `synchronized` is implemented as mentioned [here](https://openjdk.org/jeps/491#Future:~:text=The%20reason%20for%20pinning). It is changed in this [pull request](https://github.com/openjdk/jdk/pull/21565). 
    - Other cases are mentioned [here](https://openjdk.org/jeps/491#Future:~:text=while%20holding%20locks.-,Future%20Work,-There%20are%20a).
