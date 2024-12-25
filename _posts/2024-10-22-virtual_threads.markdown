@@ -2,10 +2,11 @@
 layout: post
 title:  "Virtual threads overview - not a 101"
 date:   2024-12-25 06:30:10 +02
-categories: java, virtual threads, pinning, carrier thread, platform thread 
+categories: java, virtual_threads, pinning, platform_thread 
 published: true
 ---
 **Disclaimer**: Do not use this write up as a 101 source for virtual threads but instead read it once you have read other 101 write ups about it to clarify some of your lingering questions in your mind afterwards.
+
  Virtual thread is originally introduced as a preview feature in Java 19 as part of [JEP 425](https://openjdk.org/jeps/425) and has added as a stable feature in Java 21.
  Some key points to note down are - 
  - It is not inherentally fast compared to normal java thread (will call it as `platform thread` from here onwards).
