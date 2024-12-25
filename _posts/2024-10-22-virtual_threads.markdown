@@ -2,7 +2,7 @@
 layout: post
 title:  "Virtual threads overview - not a 101"
 date:   2024-12-25 06:30:10 +02
-categories: java, virtual_threads, pinning, platform_thread 
+categories: java virtual_threads pinning platform_thread 
 published: true
 ---
 **Disclaimer**: Do not use this write up as a 101 source for virtual threads but instead read it once you have read other 101 write ups about it to clarify some of your lingering questions in your mind afterwards.
