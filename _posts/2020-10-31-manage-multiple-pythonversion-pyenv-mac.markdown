@@ -4,7 +4,7 @@ title:  "How to manage multiple version of python in mac"
 date:   2020-10-31 9:32:36 +0530
 categories: Python pyenv mac homebrew
 ---
-When it comes to programming language, Java is my goto langauge. But when I would like to try some sample realed to NLP or machine learning, I will compelled to use
+When it comes to programming language, Java is my goto langauge. But when I would like to try some sample realed to NLP or machine learning, I am compelled to use
 python because most of the examples were in python. As I follow the examples, I will try to do pip install as said in the examples. When I started doing different
 categories of examples (spacy, rasa, scikit etc..), I found that different libaries were depending on different version of libary and I messed up all my python installation with
 different version of those libary. Then I realized that it's easier to use different python environment for different type of problems. Then I came to read a wonderful article about 'pyenv'
