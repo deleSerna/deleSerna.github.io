@@ -84,4 +84,4 @@ If we follow the same procedure by modifying the server to use `Executors.newFix
 **References**
 1. [Virtual threads](https://docs.oracle.com/en/java/javase/21/core/virtual-threads.html#GUID-68216B85-7B43-423E-91BA-11489B1ACA61)
 2. [Networking-io-with-virtual-threads](https://inside.java/2021/05/10/networking-io-with-virtual-threads/)
-3. [Rock the jvm ](https://rockthejvm.com/articles/the-ultimate-guide-to-java-virtual-threads#some-virtual-threads-internals)
+3. [Rock the jvm](https://rockthejvm.com/articles/the-ultimate-guide-to-java-virtual-threads#some-virtual-threads-internals)
