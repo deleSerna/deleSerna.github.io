@@ -2,8 +2,8 @@
 layout: post
 title:  "Spring AI with Vertex 101"
 date:   2025-05-29 06:30:10 +02
-categories: java spring_ai vertex ai 
-published: false
+categories: java spring_ai vertex ai  vaadin
+published: true
 ---
 
 Follow this [guide](https://spring.io/guides/gs/spring-boot#scratch) from spring and create a sample application. I have also added `spring-boot-starter-web` and `spring-ai-starter-model-vertex-ai-gemini` etc. as the dependency. Then, download the project
@@ -15,7 +15,6 @@ and open it in your favorite IDE. I have chosen gradle instead of maven. The dep
 ```
 Then create a sample controller that uses a VertexAiGeminiChatModel. You can use a sample from [here][Spring AI sample] or [here](https://github.com/deleSerna/ai-ex/tree/main/java/springAI).
 
-Then to connect to Vertex Gemini API, following properties are need to add to `resources/application.properties`.
 ```
 spring.ai.vertex.ai.gemini.project-id=<fill-your-project-id>
 spring.ai.vertex.ai.gemini.location=<your-location>
@@ -50,7 +49,8 @@ Type the following URL in the browser and it should output something like {"gene
 http://localhost:8080/ai/generate?message=goodmorning
 ```
 Voila. You are ready to go.
-**References**
+
+Here you can find a similar project that use Vaadin with Vertex API.
 
 [Google-Cloud]: https://cloud.google.com/blog/topics/developers-practitioners/google-cloud-and-spring-ai-10
 [Spring AI sample]: https://code.likeagirl.io/spring-boot-ai-chat-app-with-deepseek-openai-gemini-d860bb8fe5cb
