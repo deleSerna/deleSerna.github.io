@@ -33,7 +33,6 @@ We should also configure our system to login to Google cloud as we need to login
 - In your terminal, install the [gcloud CLI](https://cloud.google.com/sdk/docs/install?utm_campaign=CDR_0xff63493c_default_b417970735&utm_medium=external&utm_source=blog), which is essential for managing resources and setting up authentication for local development where you run your application.
 Set up your application default credentials by running the following commands: 
 ```
-
 # initialize gcloud 
 gcloud init
 # set the Project ID you have configured
@@ -43,14 +42,12 @@ gcloud auth application-default login <GMAIL ID>
 ```
 Now run the application using IDE or by running `./gradlew bootRun`.
 
-Now we can go to the browser or cli and goto the url to check whether it's working or not.
-```
 Type the following URL in the browser and it should output something like {"generation":"Good morning! How can I help you today?\n"}
-http://localhost:8080/ai/generate?message=goodmorning
-```
+`http://localhost:8080/ai/generate?message=goodmorning`
+
 Voila. You are ready to go.
 
-Here you can find a similar project that use Vaadin with Vertex API.
+[Here](https://github.com/deleSerna/ai-ex/tree/main/java/springAI/VaadinVertexExplorer) you can find a similar project that use *Vaadin* with *Vertex AP*I.
 
 [Google-Cloud]: https://cloud.google.com/blog/topics/developers-practitioners/google-cloud-and-spring-ai-10
 [Spring AI sample]: https://code.likeagirl.io/spring-boot-ai-chat-app-with-deepseek-openai-gemini-d860bb8fe5cb
