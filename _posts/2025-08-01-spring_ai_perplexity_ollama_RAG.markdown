@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Spring AI with Perplexity and Ollama"
+title:  "Spring AI with Perplexity and Ollama (RAG)"
 date:   2025-08-01 06:30:10 +02
 categories: java spring_ai perplexity_ai ollama pgvector
 published: true
