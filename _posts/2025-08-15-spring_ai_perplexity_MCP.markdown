@@ -7,7 +7,7 @@ published: true
 ---
 This document briefly describe how a MCP server that can connect to the Perplexity chat model can be created using Spring boot and how to use mcp inspector as [MCP client](https://modelcontextprotocol.io/legacy/tools/inspector) to interact with them.
 
-For this sample, we are only building a simple MCP server. Hence, there is not much complex logic on the server side.
+For this sample, we are only building a simple MCP server. Hence, there is not much complex logic on the server side. The sample can be found at this [github page](https://github.com/deleSerna/ai-ex/tree/main/java/springAI/mcp/mcp-server_stdio).
 
 In the `build.gradle`,
  - Add `org.springframework.ai:spring-ai-starter-mcp-server` for the MCP server related libraries.
