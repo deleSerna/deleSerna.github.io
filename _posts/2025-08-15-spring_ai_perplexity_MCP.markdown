@@ -12,19 +12,21 @@ For this sample, we are only building a simple MCP server. Hence, there is not m
 In the `build.gradle`,
  - Add `org.springframework.ai:spring-ai-starter-mcp-server` for the MCP server related libraries.
  - Add `org.springframework.ai:spring-ai-starter-model-openai` for the Perplexity (OpenAI) chat model related libraries.
+
 In the `application.properties`,
+
  - Enable STDIO transport by  disabling rest endpoints `spring.main.web-application-type=none`
  - Disable `logging`, otherwise logged messages will seen as output. STDIO protocol typically expects all input and output data to be in JSON format. If springboot app writes logs or banners to stdout, those will mix with your JSON output and cause JSON parsing error. Logging can be disabled by the configuration `logging.pattern.console=` and spring boot ASCII art banner can be disabled by `spring.main.banner-mode=off`.
  - Add all the Perplexity related configuration like API key, model, url etc.
 
 In the source code,
-  - Expose all the tools that the server will provided. Those should be annotate with `@Tool` and should be groupped into respective service class.
+  - Expose all the tools that the server will provided. Those should be annotate with `@Tool` and should be grouped into respective service class.
   - Once the service classes are defined (EchoToolService and PerplexityToolService), register those as ToolCallback in the SpringBootApplication class. Some sources mentioned that you do not need to add it as a ToolCallback, if you annotate them with @Tool but for some reason, it did not work and I did not really explore further in that direction.
-  - Perplexity is using the OpenAI library interfaces in the Spring boot project and ideally `OpenAIChatModel` that can connect clent can be automatically injected with the configured properties. But for some reason, it was not happening due to some kind of ambiguity and hence I explcitly added a bean for OpenAiChatModel that can connect to Perplexity.
+  - Perplexity is using the OpenAI library interfaces in the Spring boot project and ideally `OpenAIChatModel` that can connect to Perplexity should have been  automatically injected with the configured properties. But for some reason, it was not happening due to some kind of ambiguity and hence I explcitly added a bean for OpenAiChatModel that can connect to Perplexity.
 
-Once all these are done,  you can  build the project using `./gradlew clean build` and the jar should be present at `mcp-server_stdio/build/libs/mcp-server_stdio-0.0.1-SNAPSHOT.jar` if build is successful.
+Once all these are done,  you can  build the project using `./gradlew clean build` and the jar should be present at `mcp-server_stdio/build/libs/mcp-server_stdio-0.0.1-SNAPSHOT.jar` if the build is successful.
 
-Now the server part is done, we can connect to it using a MCP client. You can use MCP clients like Claude desktop etc.
+Since now we have the server build ready to execute, we can connect to it using a MCP client. You can use MCP clients like Claude desktop etc.
 But here I have used the [MCP insepctor](https://modelcontextprotocol.io/legacy/tools/inspector) as MCP client.
 
 
