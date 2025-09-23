@@ -35,8 +35,8 @@ MCP client
  - Start npx @modelcontextprotocol/inspector.
  - Open the UI, 
    - Choose `STDIO` as transport
-   - Command `java` . Please be careful to avoid extra spaces at both end otherwise, it wont connect to the jar
-   -  Args `-jar replace-with-full-path/mcp-server_stdio/build/libs/mcp-server_stdio-0.0.1-SNAPSHOT.jar` 
+   - Provide command as `java`. Please be careful to avoid extra spaces at both end otherwise, it wont' connect to the jar
+   - Provide args as `-jar replace-with-full-path/mcp-server_stdio/build/libs/mcp-server_stdio-0.0.1-SNAPSHOT.jar` 
    - Press the connect button, if connection is successful then go to tools tab and list out the tools and use it.
 
  If connection is unsucessful then it's best to manually run the  `java -jar replace-with-full-path/mcp-server_stdio/build/libs/mcp-server_stdio-0.0.1-SNAPSHOT.jar` and add enough debugging statement to make sure that it is running as expected.
