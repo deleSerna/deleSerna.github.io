@@ -21,7 +21,7 @@ pgvector-doggydb  | 2025-06-30 21:09:54.274 UTC [1] LOG:  database system is rea
 You can also connect to the DB using psql cli to make sure everything is ok.
 ```psql -U YOUR_DOGGY_DB_USER   -h localhost doggybagdb```
 
-Once the db is up and running we can start the `ollama` local instance via docker `docker compose -f ollama-compose.yml`.
+Once the db is up and running we can start the `ollama` local instance via docker `docker compose -f ollama-compose.yml up`.
 If everything is OK, then check it's status in the browser `http://localhost:11434` and it should display
 `Ollama is running`. Once the `ollama`is running then we should pull some `ollama` LLM so that we can use that to create the vector embedding. In our case, we can pull `nomic-embed-text`.
 ```
