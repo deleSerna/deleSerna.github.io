@@ -40,7 +40,7 @@ Go the [mcp client folder](https://github.com/deleSerna/ai-ex/tree/main/java/spr
 
 Fill the PerplexityAPI credentials in the  [application.properties](https://github.com/deleSerna/ai-ex/blob/main/java/springAI/mcporchestrator/routing-workflow/src/main/resources/application.properties#L5) and start the server by `./mvnw spring-boot:run`. Verify that the orchestrator is working as expected by sending different requests to make sure that you are getting responses from both MCP clients
  - To verify it's connected to MCP client 1, sent a request something like below.
-  `curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a person with name David" http://localhost:8080/route/agent`
+  -`curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a person with name David" http://localhost:8080/route/agent`
 The tool found one account matching the name "David". The details of this account are:
 ```
 ID: 1
@@ -50,14 +50,14 @@ Type: STD
 Status: 1
 ```
  - To verify it's connected to MCP client 2, send a request something like below.
-` curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a company  with name flipkart" http://localhost:8080/route/agent`
+-`curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a company  with name flipkart" http://localhost:8080/route/agent`
 Based on the tool's output, there is one seller account owned by Flipkart with the following details:
 ```
-*   ID: 2
-*   Name: Marc
-*   Owner: flipkart
-*   Type: STD (Standard)
-*   Status: 1                                                            
+ID: 2
+Name: Marc
+Owner: flipkart
+Type: STD (Standard)
+Status: 1                                                            
 ```
 
 Based on the example, we can see that the orchestrator is automatically picking up the right client based on the user input and thus we are connected to different MCP servers for different input.
