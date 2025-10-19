@@ -5,7 +5,7 @@ date:   2025-10-17 23:30:10 +02
 categories: java spring_ai spring_boot mcp ollama perplexity_ai agentic_patterns
 published: true
 ---
-This is a follow up of my [previous article] (https://deleserna.github.io/java/spring_ai/perplexity_ai/mcp/mcp_server/mcp_inspector/2025/08/15/spring_ai_perplexity_MCP.html). Here, I demonstrate how we could set up multiple MCP client-servers and how an agentic pattern can be used to integrate them.
+This is a follow up of my [previous article](https://deleserna.github.io/java/spring_ai/perplexity_ai/mcp/mcp_server/mcp_inspector/2025/08/15/spring_ai_perplexity_MCP.html). Here, I demonstrate how we could set up multiple MCP client-servers and how an agentic pattern can be used to integrate them.
 
 The overall architecture of the setup is as follows. We have 2 MCP servers each exposeing different tools but connecting to the same db to retrieve different data. Each MCP server is connected to an MCP client via http. The server will announce its exposed tool to the client and here we use ollama to select the tools provided by the server. In our example, MCP server exposes only one tool, therefore here the client won't have much difficulty in choosing the right tool. But we can easily expand the MCP server to expose more tools.
 
@@ -40,27 +40,26 @@ Go the [mcp client folder](https://github.com/deleSerna/ai-ex/tree/main/java/spr
 
 Fill the PerplexityAPI credentials in the  [application.properties](https://github.com/deleSerna/ai-ex/blob/main/java/springAI/mcporchestrator/routing-workflow/src/main/resources/application.properties#L5) and start the server by `./mvnw spring-boot:run`. Verify that the orchestrator is working as expected by sending different requests to make sure that you are getting responses from both MCP clients
  - To verify it's connected to MCP client 1, sent a request something like below.
- ```
-  curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a person with name David" http://localhost:8080/route/agent
+  `curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a person with name David" http://localhost:8080/route/agent`
 The tool found one account matching the name "David". The details of this account are:
-
+```
 ID: 1
 Name: David
 Owner: Amazon
 Type: STD
-Status: 1 (which likely means it's active or valid)
+Status: 1
 ```
  - To verify it's connected to MCP client 2, send a request something like below.
- ```
- curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a company  with name flipkart" http://localhost:8080/route/agent
+` curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a company  with name flipkart" http://localhost:8080/route/agent`
 Based on the tool's output, there is one seller account owned by Flipkart with the following details:
-
+```
 *   ID: 2
 *   Name: Marc
 *   Owner: flipkart
 *   Type: STD (Standard)
-*   Status: 1⏎                                                                
+*   Status: 1                                                            
 ```
+
 Based on the example, we can see that the orchestrator is automatically picking up the right client based on the user input and thus we are connected to different MCP servers for different input.
 We could easily adapt these sample approaches for different MCP servers.
 
