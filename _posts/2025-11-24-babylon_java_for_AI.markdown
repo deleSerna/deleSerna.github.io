@@ -2,86 +2,42 @@
 layout: post
 title:  "Project Babylon basics"
 date:   2025-11-24 22:450:10 +02
-categories: java ai code_model babyloncode_reflection
+categories: java ai code_model babylon code_reflection
 published: false
 ---
-**Note**: Do not use this write up as a 101 source for virtual threads but instead read it once you have read other 101 write ups about it to clarify some of your lingering questions in your mind afterwards.
+Before digging into the details of project babylon, it is best to understand some basics of GPU programming model we will use NVIDIA's CUDA model for that. These are two good very resources to understand NVIDA's CUDA GPU programming model [1](https://people.montefiore.uliege.be/geuzaine/INFO0939/assets/slides/gpu-cuda-introduction.pdf) and [2](https://developer.nvidia.com/blog/cuda-refresher-cuda-programming-model).
 
- Virtual thread is originally introduced as a preview feature in Java 19 as part of [JEP 425](https://openjdk.org/jeps/425) and has added as a stable feature in Java 21.
- Some key points to note down are - 
- - It is not inherentally fast compared to normal java thread (will call it as `platform thread` from here onwards).
- - Only useful, if tasks are mix of CPU and IO bound. If it is CPU bound then  it wont be better than platform threads.
- - It should not be pooled as it's only meant to use for some short lived synchronous tasks.
+From a simplistic pov, GPU programming model contains 2 entities `kernel function` and `compute function`. Kernel function will actually execute on mutiple threads of GPU. Compute function executes on CPU which apart from launching the kernel function, handle the input and output of the kernel function.
 
-**Limiting factors of current threads in java are** 
-  - The number of available threads are limited because the JDK implements threads as wrappers around operating system (OS)  
-     threads. OS threads (and so platform threads)  are limited, so we cannot have too many of them, which makes the current platform threads ill-suited to the thread-per-request style. 
-  - You have to  program in asynchronous style to increase the throughput and that is not easy for debugging because in stacktrace you won't always see the continuity between the callee and the caller. 
-   
-   A virtual thread is an instance of `java.lang.Thread` that is not tied to a particular OS thread unlike the platform thread.
+GPU follows Simple Instruction Mutiple Thread(SIMT) approach. That means, it will run the same instruction on multiple threads. But each thread can access the data based on it's index and thus all the threads can be operate on different parts of data at the same time. Therefore, it can achieve massive parallellism without any race conditions. 
 
-   When a code running in a virtual thread has invoked a blocking I/O operation in the `java.*` API, the runtime performs a non-blocking OS call and automatically suspends the virtual thread until it can be resumed later.
-   Number of java libraries are changed it's internal implementation to support this non blocking operations by using NIO (eg: [JEP-353](https://openjdk.org/jeps/353), [JEP-373](https://openjdk.org/jeps/373) etc.) 
-   or using `ReentrantLock` instead of `synchronized block`. 
-   
-   [Here](https://github.com/deleSerna/javanewfeatures/blob/main/java23/virtualthread/src/IoEchoThreadPoolServer.java#L20), I have adapted a small NIO based client server program using Virtual Thread to understand the changes in the ServerSocket api for virtual thread.
-   
-   Steps to follow
-   1. Start IoEchoThreadPoolServer.
-   2. Start IoEchoClient.
-   3. At this point, one of the worker theread has connected to the client and is waiting for an input from the client.
-   4. Get `pid` of the IoEchoThreadPoolServer (eg: ps -ef | grep IoEchoThreadPoolServer)
-   5. Dump the server thread log.
+For eg: the instruction to GPU could be `c[idx] = a[idx] + b[idx];` where `idx` can be the thread id. If we execute that instruction on mutiple threads each will be accessing different indices of the array and thus achieving massive parallelism by operating on different data parts at the same time.
 
-If we go through the logs of the server then we could see that in case of the virtual thread, the thread is going into a parked state (yielding the platform thread and be suspended) when it is waiting for an input from the client.
-   ```
-   #30  virtual
-      java.base/java.lang.VirtualThread.park(VirtualThread.java:601)
-      ...
-      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:369)
-      ..
-      java.base/sun.nio.ch.NioSocketImpl.park(NioSocketImpl.java:201)
-      java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:309)
-      ....
-      java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1116)
-      java.base/java.net.Socket$SocketInputStream.read(Socket.java:1103)
-      java.base/java.io.InputStream.read(InputStream.java:220)
-      IoEchoThreadPoolServer$Worker.run(IoEchoThreadPoolServer.java:55)
-   ```
+ Naturally, parallellism depends on type of instructions in the kernel function. If it contain many branches then all threads may not be exceuting at the same time and we won't be getting full parallelism as expected.
 
-If we follow the same procedure by modifying the server to use `Executors.newFixedThreadPool(5)`, but in the server log we could see that the platform thread is still blocked by waiting for the input from the client.
-   ```
-      #29 "pool-1-thread-1"
-      java.base/sun.nio.ch.SocketDispatcher.read0(Native Method)
-      java.base/sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:47)
-      java.base/sun.nio.ch.NioSocketImpl.tryRead(NioSocketImpl.java:256)
-      ....
-      java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1116)
-      java.base/java.net.Socket$SocketInputStream.read(Socket.java:1103)
-      java.base/java.io.InputStream.read(InputStream.java:220)
-      IoEchoThreadPoolServer$Worker.run(IoEchoThreadPoolServer.java:56)
-   ``` 
+In GPU programming, programmer should mark the functions that need to be excuted on GPU (aka `kernel function`) explicitly and also need to specify the number of threads that should execute the kernel function.
 
-  <!-- If you do `Thread.sleep(Duration.ofSeconds(1))` then  the virtual thread is actually sleeping. Not sure about the platform thread. -->
-   The identity of the carrier is unavailable to the virtual thread. The value returned by `Thread.currentThread()` is always the virtual thread itself.
-   Virtual threads is set to daemon thread as mostly because implementors don't want it to interact with the shutdown sequence otherwise program would need to wait for 1000s of virtual threads to be shut down and programmers could wait up on it's completion in other way as shown in [here](https://github.com/deleSerna/javanewfeatures/blob/main/java23/virtualthread/src/IoEchoThreadPoolServer.java#L20).
-   <!-- How to make  thread-local data accidentally leaking from one task to another? -->
+Therefore, in java program, if we can similarly mark function that need to be executed on GPU as `kernel function` and get access to the kernel function code, then with the help of java libraries,
+we can convert that code to CUDA or any othe programming model as you can imagine and run on GPU like a normal CUDA program. Project babylon is trying to adress these concerns. 
+
+How is it solving?
+
+For that purpose, a new concept called 'code reflection' has been introduced. During compile time, a code model of functions that are marked for 'code reflection' is made and avialble in some form (currently in a separate inner class). GPU converter libraries use those code models and convert them to GPU specific language. These converrter libraries are currently placed under Heteerrogeneous Accelarator Toolkit libraries (HAT).
+
+As you can imagine, since GPU can not access java heap, we have to place our data that needs to be executed on GPU ofheap. ByteBuffer could help here but that meant we need to pin the memory to avoid GCing that sapce. FFM APIs provided by project panama can be used for this purpose so that we can create ofheap memory on java side and we do not need to create a copy of it to pass it to GPU.
+
+ $JDK_26/bin/javac -cp /Users/nadeesh.tv/repos/personal/openjdk/babylon/hat/build/hat-core-1.0.jar --add-modules jdk.incubator.code --enable-preview  --source 26  -sourcepath src/main/java   src/main/java/org/example/Main.java -d build
+
+> $JDK_26/bin/java --add-modules jdk.incubator.code --enable-preview -cp build:/Users/nadeesh.tv/repos/personal/openjdk/babylon/hat/build/hat-core-1.0.jar org.example.Main
 
 
-   The vast majority of blocking operations in the JDK will unmount the virtual thread, freeing its carrier and the underlying OS thread to take on new work.
-   However, some blocking operations in the JDK do not unmount the virtual thread, and thus block both its carrier and the underlying OS thread. 
-   This is because of limitations either at the OS level or at the JDK level (e.g., Object.wait()). 
-   The maximum number of platform threads available to the scheduler can be tuned with the system property jdk.virtualThreadScheduler.maxPoolSize to increase the avaialble threads in those cases.
-
-   There are a couple of scenarios in which a virtual thread cannot be unmounted during blocking operations because it is pinned to its carrier:
-   - When it executes a native method or a foreign function.
-     - Native method can’t be supported because virtual threrad implementation works by unwinding the stack into the heap. Doing that requires metadata describing what’s on the stack and where, which has to be produced by the JIT compiler. Native frames were produced by a non-JVM compiler and lack that metadata, so can’t be unwound. 
-   - When it executes code inside a synchronized block or method (till Java 23).
-     - This is mostly due to the how `synchronized` is implemented as mentioned [here](https://openjdk.org/jeps/491#Future:~:text=The%20reason%20for%20pinning). It is changed in this [pull request](https://github.com/openjdk/jdk/pull/21565). 
-   - Other cases are mentioned [here](https://openjdk.org/jeps/491#Future:~:text=while%20holding%20locks.-,Future%20Work,-There%20are%20a).
+ $JDK_26/bin/javac -cp $HAT_JAR/hat-core-1.0.jar:$HAT_JAR/hat-backend-java-mt-1.0.jar --add-modules jdk.incubator.code --enable-preview  --source 26  -sourcepath src/main/java   src/main/java/org/example/MainWithHAT.java -d build
+nadeesh.tv@GS-Nadeesh-G6DT6HJH7K ~/r/p/g/a/j/b/h/HAT101 (main)> $JDK_26/bin/java -cp $HAT_JAR/hat-core-1.0.jar:$HAT_JAR/hat-backend-java-mt-1.0.jar:build org.example.MainWithHAT
    
 
 **References**
-1. [Virtual threads](https://docs.oracle.com/en/java/javase/21/core/virtual-threads.html#GUID-68216B85-7B43-423E-91BA-11489B1ACA61)
-2. [Networking-io-with-virtual-threads](https://inside.java/2021/05/10/networking-io-with-virtual-threads/)
-3. [Rock the jvm](https://rockthejvm.com/articles/the-ultimate-guide-to-java-virtual-threads#some-virtual-threads-internals)
+1. [Project babylon](https://openjdk.org/projects/babylon/)
+2. [Article by Poonam Parhar](https://inside.java/2024/10/23/java-and-ai/)
+3. [Artcle by 
+Juan Fumero](https://jjfumero.github.io/posts/2025/02/07/babylon-and-tornadovm)
+4. [SIMT vs SIMD](https://yosefk.com/blog/simd-simt-smt-parallelism-in-nvidia-gpus.html)
