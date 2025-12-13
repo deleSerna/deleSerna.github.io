@@ -40,7 +40,7 @@ Since GPUs cannot access the Java heap, data must be off-heap. ByteBuffer could 
 
 Thus, Project Babylon is trying to adress the `Java for AI` motto using `code reflection` in combination with new ClassFile API (introduced in Java 24) and FFM APIs.
 
-I've added a beginner-friendly HAT101 sample using the `opencl` backend (GPU on MacBook Pro) to this github project](https://github.com/deleSerna/ai-ex/tree/main/java/babylon/hat101/HAT101). The `MainWithHAT.java` class contain a `readme` to build and execute the particular sample.
+I've added a beginner-friendly HAT101 sample using the `opencl` backend (GPU on MacBook Pro) to this [github project](https://github.com/deleSerna/ai-ex/tree/main/java/babylon/hat101/HAT101). The `MainWithHAT.java` class contain a `readme` to build and execute the particular sample.
    
 
 **References**
