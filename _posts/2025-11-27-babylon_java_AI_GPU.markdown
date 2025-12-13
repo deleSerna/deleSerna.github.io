@@ -3,7 +3,7 @@ layout: post
 title:  "Project Babylon basics"
 date:   2025-11-27 23:30:10 +02
 categories: java ai code_model babylon code_reflection
-published: false
+published: true
 ---
 Before exploring Project Babylon's details, we will look into some of the fundamentals of the GPU programming model, using NVIDIA's CUDA as reference and whenever GPPU mentioned, it implies NVIDIA's CUDA-enabled GPU.
 
