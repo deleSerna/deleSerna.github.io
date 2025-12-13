@@ -5,65 +5,46 @@ date:   2025-11-27 23:30:10 +02
 categories: java ai code_model babylon code_reflection
 published: false
 ---
-This is a follow up of my [previous article](https://deleserna.github.io/java/spring_ai/perplexity_ai/mcp/mcp_server/mcp_inspector/2025/08/15/spring_ai_perplexity_MCP.html). Here, I demonstrate how we could set up multiple MCP client-servers and how an agentic pattern can be used to integrate them.
+Before exploring Project Babylon's details, we will look into some of the fundamentals of the GPU programming model, using NVIDIA's CUDA as reference and whenever GPPU mentioned, it implies NVIDIA's CUDA-enabled GPU.
 
-The overall architecture of the setup is as follows. We have 2 MCP servers each exposeing different tools but connecting to the same db to retrieve different data. Each MCP server is connected to an MCP client via http. The server will announce its exposed tool to the client and here we use ollama to select the tools provided by the server. In our example, MCP server exposes only one tool, therefore here the client won't have much difficulty in choosing the right tool. But we can easily expand the MCP server to expose more tools.
+These two excellent resources explain CUDA's model in detail if you would like to explore further: [1](https://people.montefiore.uliege.be/geuzaine/INFO0939/assets/slides/gpu-cuda-introduction.pdf) and [2](https://developer.nvidia.com/blog/cuda-refresher-cuda-programming-model).
 
-Each MCP client is dedicatedly connected to only one MCP server. Therefore, we use an orchestrator/router that can select one among the MCP Clients using a perplexity-ai model based on user input.
+### GPU Programming Basics
 
-All the code can be found at my [github repo](https://github.com/deleSerna/ai-ex/tree/main/java/springAI/mcporchestrator).
+From a simplified view, the model involves two entities: a `kernel function` that can execute on multiple GPU threads, and a `compute function` that execute on the CPU which launches the kernel function while managing kernel's inputs and outputs.
 
-Orchestrator is a modified version from the [spring ai example](https://github.com/spring-projects/spring-ai-examples/tree/main/agentic-patterns/routing-workflow).
-MCP client and server example is adapted based on this [github project](https://github.com/kuldeepsingh99/mcp-server-with-spring-ai/blob/main/README.md).
+CUDA-enabled GPUs, follows Simple Instruction Mutiple Thread (SIMT) approach, running identical instructions on many threads simultaneously. But each thread can access unique data via it's index, allowing all threads to operate on different parts of data at the same time and enabling massive parallelism. 
 
-# MCP server
+For instance, a kernel instruction like `c[idx] = a[idx] + b[idx]` —where `idx` is the thread ID—allows threads to process different array elements concurrently.
 
-- Make the potsgres db up and running.
-   - Go the [docker folder](https://github.com/deleSerna/ai-ex/tree/main/java/springAI/mcporchestrator/mcp-client-server/docker) and `docker-compose up -d`
-   - Connect to the db `psql -U myuser -h localhost mydatabase`.
-   - Enter the password which is present in the docker file.
-   - Create the table by `\i path-to-table.sql`
-   - Insert data in the generated table by `\i path-to-insert-data.sql`
-   - Verify that data is generated as expected by `select * from public.seller_account;`
+ Naturally, parallellism depends on type of instructions in the kernel function. If it contain many branches, not all threads may execute at the same time, and we won't achieve full parallelism as expected.
 
-- Make the ollama db up and running.
-   - docker-compose -f ollama-compose.yml up -d
-   - Pull the  llama 3.1 by `docker exec -it ollama_mcp ollama pull llama3.1`
+### Marking and Launching Kernels
 
-- Go to each [mcpserver](https://github.com/deleSerna/ai-ex/tree/main/java/springAI/mcporchestrator/mcp-client-server/mcp-server) folder and run ` ./gradlew bootRun` and make sure that server is started as expected.
+In GPU programming, programmers explicitly annotate GPU-bound functions as kernels and specify the number of GPU threads for it's execution.
 
-# MCP client
-Go the [mcp client folder](https://github.com/deleSerna/ai-ex/tree/main/java/springAI/mcporchestrator/mcp-client-server/mcp-client) and run ` ./gradlew bootRun` and make sure that the client is started as expected. Verify that MCP client to server connection is ok by sending a request to the MCP client. 
-  - `curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "q=Marc" http://localhost:8040/name`
+To make Java GPU programming friendly, we need three bare minimum things:
+   - A way to annotate methods as GPU-bound methods.
+   - Access to the code of such methods in a way that can be easily converted to any other non-Java language.
+   - Efficient management of data between Java and native.
+ 
+Project Babylon addresses these points so that Java programs can access GPUs efficiently.
 
-# MCP Orchestrator
+### Project Babylon Solution
 
-Fill the PerplexityAPI credentials in the  [application.properties](https://github.com/deleSerna/ai-ex/blob/main/java/springAI/mcporchestrator/routing-workflow/src/main/resources/application.properties#L5) and start the server by `./mvnw spring-boot:run`. Verify that the orchestrator is working as expected by sending different requests to make sure that you are getting responses from both MCP clients
- - To verify it's connected to MCP client 1, sent a request something like below.
-  -`curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a person with name David" http://localhost:8080/route/agent`
-The tool found one account matching the name "David". The details of this account are:
-```
-ID: 1
-Name: David
-Owner: Amazon
-Type: STD
-Status: 1
-```
- - To verify it's connected to MCP client 2, send a request something like below.
--`curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=find out a company  with name flipkart" http://localhost:8080/route/agent`
-Based on the tool's output, there is one seller account owned by Flipkart with the following details:
-```
-ID: 2
-Name: Marc
-Owner: flipkart
-Type: STD (Standard)
-Status: 1                                                            
-```
+A new concept called `code reflection` has been introduced to access a method's code. During compile time, a code model of functions marked for `code reflection` is created and made available (currently in a separate inner class). The code model acts as an IR, allowing libraries to convert it to any non-Java language.
 
-Based on the example, we can see that the orchestrator is automatically picking up the right client based on the user input and thus we are connected to different MCP servers for different input.
-We could easily adapt these sample approaches for different MCP servers.
+As part of Project Babylon, converter libraries that transform Java kernel functions to CUDA, SPIR-V, OpenCL, etc., have been developed; these are referred to as the Heterogeneous Accelerator Toolkit (`HAT`). Methods annotated with `@Reflect` and having parameters like `ComputeContext` or `KernelContext` are identified as `compute functions` and `kernel functions`, respectively.
 
+Since GPUs cannot access the Java heap, data must be off-heap. ByteBuffer could help, but it requires pinning memory to avoid GC, and accessible native memory is limited. Project Panama's Foreign Function & Memory (FFM) APIs enable efficient off-heap allocation on the Java side, and HAT uses FFM APIs heavily instead of JNI and ButeBuffer.
+
+Thus, Project Babylon is trying to adress the `Java for AI` motto using `code reflection` in combination with new ClassFile API (introduced in Java 24) and FFM APIs.
+
+I've added a beginner-friendly HAT101 sample using the `opencl` backend (GPU on MacBook Pro) to this [github project](https://github.com/deleSerna/ai-ex/tree/main/java/babylon/hat101/HAT101). The `MainWithHAT.java` class contain a `readme` to build and execute the particular sample.
+   
 
 **References**
-1. [MCP orchestrator](https://github.com/spring-projects/spring-ai-examples/tree/main/agentic-patterns/routing-workflow)
-2. [MCP server - client](https://github.com/kuldeepsingh99/mcp-server-with-spring-ai/blob/main/README.md)
+1. [Project Babylon](https://openjdk.org/projects/babylon/)
+2. [Article by Poonam Parhar](https://inside.java/2024/10/23/java-and-ai/)
+3. [Artcle by Juan Fumero](https://jjfumero.github.io/posts/2025/02/07/babylon-and-tornadovm)
+4. [SIMT vs SIMD](https://yosefk.com/blog/simd-simt-smt-parallelism-in-nvidia-gpus.html)
