@@ -5,17 +5,17 @@ date:   2025-11-27 23:30:10 +02
 categories: java ai code_model babylon code_reflection
 published: true
 ---
-Before exploring Project Babylon's details, we will look into some of the fundamentals of the GPU programming model, using NVIDIA's CUDA as reference and whenever GPPU mentioned, it implies NVIDIA's CUDA-enabled GPU.
+Before exploring Project Babylon's details, we will look into some of the fundamentals of the GPU programming model, using NVIDIA's CUDA as reference and whenever GPPU mentionedin this article, it implies NVIDIA's CUDA-enabled GPU.
 
 These two excellent resources explain CUDA's model in detail if you would like to explore further: [1](https://people.montefiore.uliege.be/geuzaine/INFO0939/assets/slides/gpu-cuda-introduction.pdf) and [2](https://developer.nvidia.com/blog/cuda-refresher-cuda-programming-model).
 
 ### GPU Programming Basics
 
-From a simplified view, the model involves two entities: a `kernel function` that can execute on multiple GPU threads, and a `compute function` that execute on the CPU which launches the kernel function while managing kernel's inputs and outputs.
+From a simplified pov, CUda's model involves two entities: a `kernel function` that can execute on multiple GPU threads, and a `compute function` that execute on the CPU which launches the kernel function while managing kernel's inputs and outputs.
 
-CUDA-enabled GPUs, follows Simple Instruction Mutiple Thread (SIMT) approach, running identical instructions on many threads simultaneously. But each thread can access unique data via it's index, allowing all threads to operate on different parts of data at the same time and enabling massive parallelism. 
+CUDA-enabled GPUs follow Simple Instruction Mutiple Thread (SIMT) approach which means running identical instructions on many threads simultaneously. But each thread can access unique data via it's index, allowing all threads to operate on different parts of data at the same time and enabling massive parallelism. 
 
-For instance, a kernel instruction like `c[idx] = a[idx] + b[idx]` —where `idx` is the thread ID—allows threads to process different array elements concurrently.
+For instance, a kernel instruction like `c[idx] = a[idx] + b[idx]` —where `idx` is the thread ID- allows threads to process different array elements concurrently.
 
  Naturally, parallellism depends on type of instructions in the kernel function. If it contain many branches, not all threads may execute at the same time, and we won't achieve full parallelism as expected.
 
@@ -23,7 +23,7 @@ For instance, a kernel instruction like `c[idx] = a[idx] + b[idx]` —where `idx
 
 In GPU programming, programmers explicitly annotate GPU-bound functions as kernels and specify the number of GPU threads for it's execution.
 
-To make Java GPU programming friendly, we need three bare minimum things:
+To make Java, GPU programming friendly, we need three bare minimum things:
    - A way to annotate methods as GPU-bound methods.
    - Access to the code of such methods in a way that can be easily converted to any other non-Java language.
    - Efficient management of data between Java and native.
