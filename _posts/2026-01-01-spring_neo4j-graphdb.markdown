@@ -43,5 +43,6 @@ Neo4j offers these introductory courses for its graph DB:
   
 ### Reference implementation
  I have added 2 examples that uses Springboot, Neo4j and Ollama [here](https://github.com/deleSerna/ai-ex/tree/main/java/springAI/VectorDB).
-**References**
+
+### References
 1. [RDBMS vs GRAPHDB](https://aws.amazon.com/compare/the-difference-between-graph-and-relational-database/)
