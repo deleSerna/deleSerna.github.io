@@ -36,7 +36,7 @@ curl localhost:11434/api/embed -d "{\"model\":\"nomic-embed-text\",\"input\":\"w
 
 Now we have a vector db and embedding model to generate the vector embedding is ready, we can now ingest our documents using the a springboot application. A similar write up to integrate springboot and Gemini vertetx api can be find [here](https://deleserna.github.io/java/spring_ai/vertex/ai/vaadin/2025/05/29/spring_ai_vertex.html).
 Please modify the `build.gradle` and `application.yml` accordingly. Ingesting the given sample texts in the `resources/breakfast` directory is provided in the `IngestionPipeline` class. To control the `ingestion` and `deletion` of ingested documents, you can use some end points as provided in the `ApiRequestController`. If injection is successful, we can explictly check that by using the CLI and number of entities in the `vectore_store` table which is the default table for the
-Vector db  for the Spring AI. If inj=gestion is succesful then number of rows of `doggybagdb.vector_store` should be 9.
+Vector db  for the Spring AI. If ingestion is succesful then number of rows of `doggybagdb.vector_store` should be 9.
 ```
 psql -U YOUR_DOGGY_DB_USER   -h localhost doggybagdb
 select count(*)  from doggybagdb.vector_store; 
@@ -51,4 +51,4 @@ Once you have filled all the necessary details in the `application.yml`, just ru
 
 2. To delete the ingested documents use, `curl -X GET -H "Content-Type: text/plain"  http://localhost:8080/doggybag/delete` 
 
-3. To intercat with the Perplexity API, `curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=where is paris?" http://localhost:8080/doggybag/chat`
+3. To interact with the Perplexity API, `curl -X GET -H "Content-Type: text/plain" -G --data-urlencode "message=where is paris?" http://localhost:8080/doggybag/chat`
